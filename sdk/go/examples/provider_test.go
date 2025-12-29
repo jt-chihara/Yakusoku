@@ -145,7 +145,7 @@ func TestProviderWithStates(t *testing.T) {
 
 	// Verify with provider states URL
 	v := verifier.New(verifier.Config{
-		ProviderBaseURL:       provider.URL,
+		ProviderBaseURL:        provider.URL,
 		ProviderStatesSetupURL: provider.URL + "/provider-states",
 	})
 

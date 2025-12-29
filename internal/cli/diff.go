@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"reflect"
 
-	"github.com/spf13/cobra"
 	"github.com/jt-chihara/yakusoku/internal/contract"
+	"github.com/spf13/cobra"
 )
 
 // NewDiffCommand creates the diff command
@@ -26,8 +26,8 @@ func NewDiffCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&oldFile, "old", "", "Path to the old contract file (required)")
 	cmd.Flags().StringVar(&newFile, "new", "", "Path to the new contract file (required)")
-	cmd.MarkFlagRequired("old")
-	cmd.MarkFlagRequired("new")
+	_ = cmd.MarkFlagRequired("old")
+	_ = cmd.MarkFlagRequired("new")
 	cmd.Flags().BoolVar(&jsonOutput, "json", false, "Output in JSON format")
 
 	return cmd
@@ -159,7 +159,8 @@ func compareContracts(oldContract, newContract *contract.Contract) diffResult {
 	// Find modified interactions
 	for desc, oldInt := range oldInteractions {
 		if newInt, exists := newInteractions[desc]; exists {
-			if !interactionsEqual(oldInt, newInt) {
+			o, n := oldInt, newInt
+			if !interactionsEqual(&o, &n) {
 				result.HasDifferences = true
 				result.Modified = append(result.Modified, desc)
 			}
@@ -169,7 +170,7 @@ func compareContracts(oldContract, newContract *contract.Contract) diffResult {
 	return result
 }
 
-func interactionsEqual(a, b contract.Interaction) bool {
+func interactionsEqual(a, b *contract.Interaction) bool {
 	// Compare request
 	if a.Request.Method != b.Request.Method ||
 		a.Request.Path != b.Request.Path {

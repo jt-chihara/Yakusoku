@@ -8,8 +8,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/spf13/cobra"
 	"github.com/jt-chihara/yakusoku/internal/contract"
+	"github.com/spf13/cobra"
 )
 
 // NewPublishCommand creates the publish command
@@ -103,7 +103,10 @@ func runPublish(cmd *cobra.Command, brokerURL string, files []string, version st
 		for _, tag := range tags {
 			tagURL := fmt.Sprintf("%s/pacticipants/%s/versions/%s/tags/%s",
 				brokerURL, c.Consumer.Name, version, tag)
-			tagReq, _ := http.NewRequest(http.MethodPut, tagURL, nil)
+			tagReq, err := http.NewRequest(http.MethodPut, tagURL, http.NoBody)
+			if err != nil {
+				continue
+			}
 			tagResp, err := http.DefaultClient.Do(tagReq)
 			if err == nil {
 				tagResp.Body.Close()

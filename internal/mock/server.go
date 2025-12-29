@@ -40,19 +40,20 @@ func (s *Server) Start() error {
 
 	// Create server mux with health check
 	mux := http.NewServeMux()
-	mux.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/health", func(w http.ResponseWriter, _ *http.Request) {
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("OK"))
+		_, _ = w.Write([]byte("OK"))
 	})
 	mux.Handle("/", s.handler)
 
-	s.server = &http.Server{
+	srv := &http.Server{
 		Handler: mux,
 	}
+	s.server = srv
 	s.url = fmt.Sprintf("http://%s", listener.Addr().String())
 
-	// Start server in goroutine
-	go s.server.Serve(listener)
+	// Start server in goroutine (capture srv to avoid race with Stop())
+	go func() { _ = srv.Serve(listener) }()
 
 	return nil
 }

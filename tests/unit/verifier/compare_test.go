@@ -3,9 +3,9 @@ package verifier_test
 import (
 	"testing"
 
+	"github.com/jt-chihara/yakusoku/internal/verifier"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/jt-chihara/yakusoku/internal/verifier"
 )
 
 func TestCompare_Status(t *testing.T) {

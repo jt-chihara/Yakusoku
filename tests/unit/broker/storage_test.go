@@ -3,10 +3,10 @@ package broker_test
 import (
 	"testing"
 
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 	"github.com/jt-chihara/yakusoku/internal/broker"
 	"github.com/jt-chihara/yakusoku/internal/contract"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestStorage_SaveContract(t *testing.T) {

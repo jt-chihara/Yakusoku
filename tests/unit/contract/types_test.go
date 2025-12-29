@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"testing"
 
+	"github.com/jt-chihara/yakusoku/internal/contract"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/jt-chihara/yakusoku/internal/contract"
 )
 
 func TestContract_JSONMarshaling(t *testing.T) {

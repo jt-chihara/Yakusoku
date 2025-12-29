@@ -116,9 +116,9 @@ func (h *Handler) writeResponse(w http.ResponseWriter, resp contract.Response) {
 	if resp.Body != nil {
 		switch body := resp.Body.(type) {
 		case string:
-			io.WriteString(w, body)
+			_, _ = io.WriteString(w, body)
 		default:
-			json.NewEncoder(w).Encode(body)
+			_ = json.NewEncoder(w).Encode(body)
 		}
 	}
 }

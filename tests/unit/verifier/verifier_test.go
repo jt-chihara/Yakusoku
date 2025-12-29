@@ -5,10 +5,10 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 	"github.com/jt-chihara/yakusoku/internal/contract"
 	"github.com/jt-chihara/yakusoku/internal/verifier"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestVerifier_Verify(t *testing.T) {

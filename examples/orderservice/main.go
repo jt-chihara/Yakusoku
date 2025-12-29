@@ -48,10 +48,10 @@ func (c *UserClient) GetUser(id int) (*User, error) {
 
 // Order represents an order in the system.
 type Order struct {
-	ID       int    `json:"id"`
-	UserID   int    `json:"userId"`
-	UserName string `json:"userName"`
-	Product  string `json:"product"`
+	ID       int     `json:"id"`
+	UserID   int     `json:"userId"`
+	UserName string  `json:"userName"`
+	Product  string  `json:"product"`
 	Total    float64 `json:"total"`
 }
 
@@ -94,7 +94,7 @@ func handleGetOrder(w http.ResponseWriter, r *http.Request) {
 	if !exists {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusNotFound)
-		json.NewEncoder(w).Encode(map[string]string{"error": "Order not found"})
+		_ = json.NewEncoder(w).Encode(map[string]string{"error": "Order not found"})
 		return
 	}
 
@@ -103,7 +103,7 @@ func handleGetOrder(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode(map[string]string{"error": err.Error()})
+		_ = json.NewEncoder(w).Encode(map[string]string{"error": err.Error()})
 		return
 	}
 
@@ -116,5 +116,5 @@ func handleGetOrder(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(response)
+	_ = json.NewEncoder(w).Encode(response)
 }

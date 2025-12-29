@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/spf13/cobra"
 	"github.com/jt-chihara/yakusoku/internal/contract"
 	"github.com/jt-chihara/yakusoku/internal/verifier"
+	"github.com/spf13/cobra"
 )
 
 type verifyOptions struct {
@@ -35,8 +35,8 @@ func NewVerifyCommand() *cobra.Command {
 	cmd.Flags().StringVar(&opts.providerStatesSetupURL, "provider-states-setup-url", "", "URL for provider states setup")
 	cmd.Flags().BoolVar(&opts.verbose, "verbose", false, "Show detailed output")
 
-	cmd.MarkFlagRequired("provider-base-url")
-	cmd.MarkFlagRequired("pact-file")
+	_ = cmd.MarkFlagRequired("provider-base-url")
+	_ = cmd.MarkFlagRequired("pact-file")
 
 	return cmd
 }
@@ -76,7 +76,7 @@ func runVerify(cmd *cobra.Command, opts *verifyOptions) error {
 	// Report results
 	reporter := verifier.NewReporter(cmd.OutOrStdout())
 	reporter.SetVerbose(opts.verbose)
-	reporter.Report(*result)
+	reporter.Report(result)
 
 	// Return error if verification failed (for exit code)
 	if !result.Success {
