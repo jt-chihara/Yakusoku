@@ -33,15 +33,16 @@ func NewPublishCommand() *cobra.Command {
 			}
 
 			var files []string
-			if pactFile != "" {
+			switch {
+			case pactFile != "":
 				files = append(files, pactFile)
-			} else if pactDir != "" {
+			case pactDir != "":
 				matches, err := filepath.Glob(filepath.Join(pactDir, "*.json"))
 				if err != nil {
 					return fmt.Errorf("failed to find contracts: %w", err)
 				}
 				files = matches
-			} else {
+			default:
 				return fmt.Errorf("either --pact-file or --pact-dir is required")
 			}
 

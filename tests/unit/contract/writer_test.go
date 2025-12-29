@@ -37,7 +37,7 @@ func TestWriter_Write(t *testing.T) {
 		}
 
 		writer := contract.NewWriter()
-		err := writer.Write(c, filePath)
+		err := writer.Write(&c, filePath)
 		require.NoError(t, err)
 
 		// Verify file exists
@@ -77,7 +77,7 @@ func TestWriter_Write(t *testing.T) {
 		}
 
 		writer := contract.NewWriter()
-		err := writer.Write(c, filePath)
+		err := writer.Write(&c, filePath)
 		require.NoError(t, err)
 
 		_, err = os.Stat(filePath)
@@ -104,7 +104,7 @@ func TestWriter_Write(t *testing.T) {
 		}
 
 		writer := contract.NewWriter()
-		err := writer.Write(c, filePath)
+		err := writer.Write(&c, filePath)
 		require.NoError(t, err)
 
 		data, err := os.ReadFile(filePath)
@@ -133,7 +133,7 @@ func TestWriter_Write(t *testing.T) {
 		}
 
 		writer := contract.NewWriter()
-		filePath, err := writer.WriteToDir(c, tmpDir)
+		filePath, err := writer.WriteToDir(&c, tmpDir)
 		require.NoError(t, err)
 
 		assert.Equal(t, filepath.Join(tmpDir, "orderservice-userservice.json"), filePath)
@@ -161,7 +161,7 @@ func TestWriter_Write(t *testing.T) {
 		}
 
 		writer := contract.NewWriter()
-		filePath, err := writer.WriteToDir(c, tmpDir)
+		filePath, err := writer.WriteToDir(&c, tmpDir)
 		require.NoError(t, err)
 
 		// Names should be lowercased and spaces replaced
@@ -187,7 +187,7 @@ func TestWriter_WriteBytes(t *testing.T) {
 		}
 
 		writer := contract.NewWriter()
-		data, err := writer.WriteBytes(c)
+		data, err := writer.WriteBytes(&c)
 		require.NoError(t, err)
 
 		var result contract.Contract

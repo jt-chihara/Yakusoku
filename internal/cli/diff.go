@@ -130,14 +130,14 @@ func compareContracts(oldContract, newContract *contract.Contract) diffResult {
 	}
 
 	// Build maps of interactions by description
-	oldInteractions := make(map[string]contract.Interaction)
-	for _, i := range oldContract.Interactions {
-		oldInteractions[i.Description] = i
+	oldInteractions := make(map[string]*contract.Interaction)
+	for i := range oldContract.Interactions {
+		oldInteractions[oldContract.Interactions[i].Description] = &oldContract.Interactions[i]
 	}
 
-	newInteractions := make(map[string]contract.Interaction)
-	for _, i := range newContract.Interactions {
-		newInteractions[i.Description] = i
+	newInteractions := make(map[string]*contract.Interaction)
+	for i := range newContract.Interactions {
+		newInteractions[newContract.Interactions[i].Description] = &newContract.Interactions[i]
 	}
 
 	// Find added interactions
@@ -159,8 +159,7 @@ func compareContracts(oldContract, newContract *contract.Contract) diffResult {
 	// Find modified interactions
 	for desc, oldInt := range oldInteractions {
 		if newInt, exists := newInteractions[desc]; exists {
-			o, n := oldInt, newInt
-			if !interactionsEqual(&o, &n) {
+			if !interactionsEqual(oldInt, newInt) {
 				result.HasDifferences = true
 				result.Modified = append(result.Modified, desc)
 			}

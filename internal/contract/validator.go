@@ -25,7 +25,7 @@ func NewValidator() *Validator {
 }
 
 // Validate validates a complete contract.
-func (v *Validator) Validate(c Contract) error {
+func (v *Validator) Validate(c *Contract) error {
 	if err := v.validatePacticipant(c.Consumer, "consumer"); err != nil {
 		return err
 	}
@@ -35,8 +35,8 @@ func (v *Validator) Validate(c Contract) error {
 	if len(c.Interactions) == 0 {
 		return fmt.Errorf("at least one interaction is required")
 	}
-	for i, interaction := range c.Interactions {
-		if err := v.validateInteraction(interaction, i); err != nil {
+	for i := range c.Interactions {
+		if err := v.validateInteraction(&c.Interactions[i], i); err != nil {
 			return err
 		}
 	}
@@ -53,21 +53,21 @@ func (v *Validator) validatePacticipant(p Pacticipant, role string) error {
 	return nil
 }
 
-func (v *Validator) validateInteraction(i Interaction, index int) error {
+func (v *Validator) validateInteraction(i *Interaction, index int) error {
 	if i.Description == "" {
 		return fmt.Errorf("interaction %d: description is required", index)
 	}
-	if err := v.ValidateRequest(i.Request); err != nil {
+	if err := v.ValidateRequest(&i.Request); err != nil {
 		return fmt.Errorf("interaction %d: %w", index, err)
 	}
-	if err := v.ValidateResponse(i.Response); err != nil {
+	if err := v.ValidateResponse(&i.Response); err != nil {
 		return fmt.Errorf("interaction %d: %w", index, err)
 	}
 	return nil
 }
 
 // ValidateRequest validates a request structure.
-func (v *Validator) ValidateRequest(r Request) error {
+func (v *Validator) ValidateRequest(r *Request) error {
 	method := strings.ToUpper(r.Method)
 	if !validMethods[method] {
 		return fmt.Errorf("invalid HTTP method: %s", r.Method)
@@ -82,7 +82,7 @@ func (v *Validator) ValidateRequest(r Request) error {
 }
 
 // ValidateResponse validates a response structure.
-func (v *Validator) ValidateResponse(r Response) error {
+func (v *Validator) ValidateResponse(r *Response) error {
 	if r.Status < 100 || r.Status > 599 {
 		return fmt.Errorf("invalid HTTP status code: %d (must be 100-599)", r.Status)
 	}

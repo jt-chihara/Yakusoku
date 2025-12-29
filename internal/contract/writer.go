@@ -17,7 +17,7 @@ func NewWriter() *Writer {
 }
 
 // Write writes a contract to a file.
-func (w *Writer) Write(c Contract, path string) error {
+func (w *Writer) Write(c *Contract, path string) error {
 	data, err := w.WriteBytes(c)
 	if err != nil {
 		return err
@@ -37,7 +37,7 @@ func (w *Writer) Write(c Contract, path string) error {
 }
 
 // WriteToDir writes a contract to a directory with auto-generated filename.
-func (w *Writer) WriteToDir(c Contract, dir string) (string, error) {
+func (w *Writer) WriteToDir(c *Contract, dir string) (string, error) {
 	filename := w.generateFilename(c.Consumer.Name, c.Provider.Name)
 	path := filepath.Join(dir, filename)
 
@@ -49,7 +49,7 @@ func (w *Writer) WriteToDir(c Contract, dir string) (string, error) {
 }
 
 // WriteBytes returns a contract as bytes.
-func (w *Writer) WriteBytes(c Contract) ([]byte, error) {
+func (w *Writer) WriteBytes(c *Contract) ([]byte, error) {
 	data, err := json.MarshalIndent(c, "", "  ")
 	if err != nil {
 		return nil, fmt.Errorf("failed to marshal contract: %w", err)
