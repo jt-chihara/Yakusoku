@@ -1,0 +1,35 @@
+services:
+  localstack:
+    image: localstack/localstack:latest
+    ports:
+      - "4566:4566"
+    environment:
+      - SERVICES=s3
+      - DEBUG=0
+    volumes:
+      - "./scripts/localstack-init.sh:/etc/localstack/init/ready.d/init.sh"
+      - localstack-data:/var/lib/localstack
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4566/_localstack/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  broker:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+    command:
+      - "--storage=s3"
+      - "--s3-bucket=yakusoku"
+      - "--s3-endpoint=http://localstack:4566"
+      - "--s3-region=us-east-1"
+    depends_on:
+      localstack:
+        condition: service_healthy
+
+volumes:
+  localstack-data:
