@@ -32,27 +32,35 @@ func Handler() http.Handler {
 			}
 		}
 
-		// Set correct Content-Type based on file extension
+		// Check if this is a static file request (has known file extension)
 		ext := filepath.Ext(path)
+		isStaticFile := false
 		switch ext {
 		case ".css":
 			w.Header().Set("Content-Type", "text/css; charset=utf-8")
+			isStaticFile = true
 		case ".js":
 			w.Header().Set("Content-Type", "application/javascript; charset=utf-8")
+			isStaticFile = true
 		case ".html":
 			w.Header().Set("Content-Type", "text/html; charset=utf-8")
+			isStaticFile = true
 		case ".json":
 			w.Header().Set("Content-Type", "application/json; charset=utf-8")
+			isStaticFile = true
 		case ".svg":
 			w.Header().Set("Content-Type", "image/svg+xml")
+			isStaticFile = true
 		case ".png":
 			w.Header().Set("Content-Type", "image/png")
+			isStaticFile = true
 		case ".ico":
 			w.Header().Set("Content-Type", "image/x-icon")
+			isStaticFile = true
 		}
 
-		// For SPA routing, serve index.html for paths that don't match a file
-		if path != "/" && !strings.Contains(path, ".") {
+		// For SPA routing, serve index.html for paths that are not static files
+		if !isStaticFile {
 			r.URL.Path = "/"
 			w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		} else {

@@ -50,11 +50,6 @@ func (s *S3Storage) contractS3Key(consumer, provider, version string) string {
 	return s.prefix + "contracts/" + consumer + "/" + provider + "/" + version + ".json"
 }
 
-// verificationS3Key generates the S3 key for verification results
-func (s *S3Storage) verificationS3Key(consumer, provider, version string) string {
-	return s.prefix + "verifications/" + consumer + "/" + provider + "/" + version + ".json"
-}
-
 // indexS3Key generates the S3 key for the index file
 func (s *S3Storage) indexS3Key() string {
 	return s.prefix + "index.json"
@@ -62,8 +57,8 @@ func (s *S3Storage) indexS3Key() string {
 
 // index represents the index structure stored in S3
 type index struct {
-	Versions      map[string][]string `json:"versions"`       // pairKey -> sorted versions
-	Verifications map[string]bool     `json:"verifications"`  // contractKey -> success
+	Versions      map[string][]string `json:"versions"`      // pairKey -> sorted versions
+	Verifications map[string]bool     `json:"verifications"` // contractKey -> success
 }
 
 // loadIndex loads the index from S3

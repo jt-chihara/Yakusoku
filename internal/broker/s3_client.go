@@ -28,14 +28,14 @@ func NewAWSS3Client(ctx context.Context) (*AWSS3Client, error) {
 }
 
 // NewAWSS3ClientWithConfig creates a new AWS S3 client with custom config
-func NewAWSS3ClientWithConfig(cfg aws.Config) *AWSS3Client {
+func NewAWSS3ClientWithConfig(cfg *aws.Config) *AWSS3Client {
 	return &AWSS3Client{
-		client: s3.NewFromConfig(cfg),
+		client: s3.NewFromConfig(*cfg),
 	}
 }
 
 // NewAWSS3ClientWithEndpoint creates a new AWS S3 client with custom endpoint (for LocalStack, MinIO, etc.)
-func NewAWSS3ClientWithEndpoint(ctx context.Context, endpoint string, region string) (*AWSS3Client, error) {
+func NewAWSS3ClientWithEndpoint(ctx context.Context, endpoint, region string) (*AWSS3Client, error) {
 	cfg, err := config.LoadDefaultConfig(ctx,
 		config.WithRegion(region),
 	)
