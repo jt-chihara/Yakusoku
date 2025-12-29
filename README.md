@@ -1,5 +1,9 @@
 # Yakusoku
 
+[![Test](https://github.com/jt-chihara/yakusoku/actions/workflows/test.yml/badge.svg)](https://github.com/jt-chihara/yakusoku/actions/workflows/test.yml)
+[![E2E Test](https://github.com/jt-chihara/yakusoku/actions/workflows/e2e.yml/badge.svg)](https://github.com/jt-chihara/yakusoku/actions/workflows/e2e.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 Consumer-driven な契約テスト CLI ツール。Pact Specification v3/v4 互換。
 
 ## 特徴
