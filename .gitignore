@@ -64,3 +64,4 @@ temp/
 .specify/
 specs/
 CLAUDE.md
+web/node_modules/*
