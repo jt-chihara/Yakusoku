@@ -1,0 +1,51 @@
+{
+  "consumer": {
+    "name": "OrderService"
+  },
+  "provider": {
+    "name": "UserService"
+  },
+  "interactions": [
+    {
+      "description": "a request to get user 1",
+      "providerState": "user 1 exists",
+      "request": {
+        "method": "GET",
+        "path": "/users/1"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "body": {
+          "id": 1,
+          "name": "Alice",
+          "email": "alice@example.com"
+        }
+      }
+    },
+    {
+      "description": "a request to get non-existent user",
+      "providerState": "user 999 does not exist",
+      "request": {
+        "method": "GET",
+        "path": "/users/999"
+      },
+      "response": {
+        "status": 404,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "body": {
+          "error": "User not found"
+        }
+      }
+    }
+  ],
+  "metadata": {
+    "pactSpecification": {
+      "version": "3.0.0"
+    }
+  }
+}
