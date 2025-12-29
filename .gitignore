@@ -1,0 +1,67 @@
+# Binaries
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+yakusoku
+yakusoku-broker
+cmd/
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool
+*.out
+coverage.html
+coverage.txt
+
+# Dependency directories
+vendor/
+
+# Go workspace file
+go.work
+
+# IDE and editor
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Build output
+dist/
+build/
+bin/
+
+# Logs
+*.log
+logs/
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Pact files (generated during tests)
+pacts/
+
+# Temporary files
+*.tmp
+*.temp
+tmp/
+temp/
+
+.claude/
+.specify/
+specs/
+CLAUDE.md
