@@ -1,0 +1,35 @@
+name: E2E Test
+
+on:
+  pull_request:
+    branches: [master]
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.24'
+
+      - name: Build CLI
+        run: go build -o bin/yakusoku ./cmd/yakusoku
+
+      - name: Run Consumer tests (generate contracts)
+        run: go test -v ./examples/orderservice/...
+
+      - name: Start Provider (UserService)
+        run: |
+          go run ./examples/userservice &
+          sleep 3
+
+      - name: Verify Provider against contracts
+        run: |
+          ./bin/yakusoku verify \
+            --provider-base-url http://localhost:8080 \
+            --pact-file pacts/orderservice-userservice.json \
+            --provider-states-setup-url http://localhost:8080/provider-states
