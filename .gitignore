@@ -4,9 +4,8 @@
 *.dll
 *.so
 *.dylib
-yakusoku
-yakusoku-broker
-cmd/
+/bin/yakusoku
+/bin/yakusoku-broker
 
 # Test binary, built with `go test -c`
 *.test
