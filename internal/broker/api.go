@@ -3,7 +3,6 @@ package broker
 import (
 	"encoding/json"
 	"net/http"
-	"strings"
 
 	"github.com/jt-chihara/yakusoku/internal/contract"
 )
@@ -63,7 +62,7 @@ func (a *API) handleListContracts(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(result)
+	_ = json.NewEncoder(w).Encode(result)
 }
 
 func (a *API) handleGetContractsByProvider(w http.ResponseWriter, r *http.Request) {
@@ -81,7 +80,7 @@ func (a *API) handleGetContractsByProvider(w http.ResponseWriter, r *http.Reques
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(result)
+	_ = json.NewEncoder(w).Encode(result)
 }
 
 func (a *API) handleGetContract(w http.ResponseWriter, r *http.Request) {
@@ -96,7 +95,7 @@ func (a *API) handleGetContract(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(c)
+	_ = json.NewEncoder(w).Encode(c)
 }
 
 func (a *API) handleGetLatestContract(w http.ResponseWriter, r *http.Request) {
@@ -110,7 +109,7 @@ func (a *API) handleGetLatestContract(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(c)
+	_ = json.NewEncoder(w).Encode(c)
 }
 
 func (a *API) handlePublishContract(w http.ResponseWriter, r *http.Request) {
@@ -131,7 +130,7 @@ func (a *API) handlePublishContract(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(map[string]string{"status": "created"})
+	_ = json.NewEncoder(w).Encode(map[string]string{"status": "created"})
 }
 
 func (a *API) handleDeleteContract(w http.ResponseWriter, r *http.Request) {
@@ -167,7 +166,7 @@ func (a *API) handleRecordVerification(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(map[string]string{"status": "recorded"})
+	_ = json.NewEncoder(w).Encode(map[string]string{"status": "recorded"})
 }
 
 func (a *API) handleMatrix(w http.ResponseWriter, r *http.Request) {
@@ -185,27 +184,5 @@ func (a *API) handleMatrix(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(result)
-}
-
-// extractPathParams is a helper to extract path parameters
-// This is a simple implementation for Go 1.21 compatibility
-func extractPathParams(path, pattern string) map[string]string {
-	params := make(map[string]string)
-
-	pathParts := strings.Split(strings.Trim(path, "/"), "/")
-	patternParts := strings.Split(strings.Trim(pattern, "/"), "/")
-
-	if len(pathParts) != len(patternParts) {
-		return params
-	}
-
-	for i, part := range patternParts {
-		if strings.HasPrefix(part, "{") && strings.HasSuffix(part, "}") {
-			key := strings.TrimPrefix(strings.TrimSuffix(part, "}"), "{")
-			params[key] = pathParts[i]
-		}
-	}
-
-	return params
+	_ = json.NewEncoder(w).Encode(result)
 }

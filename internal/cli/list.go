@@ -6,8 +6,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/spf13/cobra"
 	"github.com/jt-chihara/yakusoku/internal/contract"
+	"github.com/spf13/cobra"
 )
 
 // NewListCommand creates the list command

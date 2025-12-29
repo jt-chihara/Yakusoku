@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/spf13/cobra"
 	"github.com/jt-chihara/yakusoku/internal/contract"
+	"github.com/spf13/cobra"
 )
 
 // NewShowCommand creates the show command
@@ -23,7 +23,7 @@ func NewShowCommand() *cobra.Command {
 	}
 
 	cmd.Flags().StringVar(&pactFile, "pact-file", "", "Path to the contract file (required)")
-	cmd.MarkFlagRequired("pact-file")
+	_ = cmd.MarkFlagRequired("pact-file")
 	cmd.Flags().BoolVar(&jsonOutput, "json", false, "Output in JSON format")
 
 	return cmd

@@ -7,10 +7,10 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 	"github.com/jt-chihara/yakusoku/internal/contract"
 	"github.com/jt-chihara/yakusoku/internal/mock"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestHandler_MatchRequest(t *testing.T) {
@@ -209,7 +209,7 @@ func TestHandler_ResponseHeaders(t *testing.T) {
 			Response: contract.Response{
 				Status: 200,
 				Headers: map[string]interface{}{
-					"Content-Type":  "application/json",
+					"Content-Type":    "application/json",
 					"X-Custom-Header": "custom-value",
 				},
 			},

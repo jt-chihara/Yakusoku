@@ -7,10 +7,10 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 	"github.com/jt-chihara/yakusoku/internal/broker"
 	"github.com/jt-chihara/yakusoku/internal/contract"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestBrokerE2E_PublishAndRetrieve(t *testing.T) {
@@ -148,7 +148,8 @@ func TestBrokerE2E_MultipleConsumers(t *testing.T) {
 	}
 
 	// Get all contracts for provider
-	resp, _ := http.Get(server.URL + "/pacts/provider/UserService")
+	resp, err := http.Get(server.URL + "/pacts/provider/UserService")
+	require.NoError(t, err)
 	defer resp.Body.Close()
 
 	var contracts []map[string]interface{}
@@ -191,7 +192,8 @@ func TestBrokerE2E_VersionManagement(t *testing.T) {
 	}
 
 	// Get latest version
-	resp, _ := http.Get(server.URL + "/pacts/provider/Provider/consumer/Consumer/latest")
+	resp, err := http.Get(server.URL + "/pacts/provider/Provider/consumer/Consumer/latest")
+	require.NoError(t, err)
 	defer resp.Body.Close()
 
 	var latest contract.Contract

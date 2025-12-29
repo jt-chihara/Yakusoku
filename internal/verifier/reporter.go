@@ -22,7 +22,7 @@ func (r *Reporter) SetVerbose(verbose bool) {
 }
 
 // Report writes the verification result to the output.
-func (r *Reporter) Report(result VerificationResult) {
+func (r *Reporter) Report(result *VerificationResult) {
 	passed := 0
 	failed := 0
 

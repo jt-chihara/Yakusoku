@@ -30,11 +30,10 @@ type Pact struct {
 }
 
 type interactionBuilder struct {
-	providerState  string
-	providerStates []contract.ProviderState
-	description    string
-	request        contract.Request
-	response       contract.Response
+	providerState string
+	description   string
+	request       contract.Request
+	response      contract.Response
 }
 
 // NewPact creates a new Pact instance.

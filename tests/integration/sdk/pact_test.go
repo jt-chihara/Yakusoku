@@ -7,9 +7,9 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/jt-chihara/yakusoku/sdk/go/yakusoku"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/jt-chihara/yakusoku/sdk/go/yakusoku"
 )
 
 func TestPact_NewPact(t *testing.T) {
