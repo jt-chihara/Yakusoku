@@ -2,29 +2,42 @@ name: Release
 
 on:
   push:
-    tags:
-      - 'v*'
+    branches:
+      - master
 
 permissions:
   contents: write
+  pull-requests: write
 
 jobs:
+  tagpr:
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.tagpr.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run tagpr
+        id: tagpr
+        uses: Songmu/tagpr@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
   build:
+    needs: tagpr
+    if: needs.tagpr.outputs.tag != ''
     runs-on: ubuntu-latest
     strategy:
       matrix:
         include:
-          # Linux
           - goos: linux
             goarch: amd64
           - goos: linux
             goarch: arm64
-          # macOS
           - goos: darwin
             goarch: amd64
           - goos: darwin
             goarch: arm64
-          # Windows
           - goos: windows
             goarch: amd64
           - goos: windows
@@ -59,7 +72,8 @@ jobs:
             yakusoku-broker-*
 
   release:
-    needs: build
+    needs: [tagpr, build]
+    if: needs.tagpr.outputs.tag != ''
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -70,8 +84,7 @@ jobs:
           path: binaries
           merge-multiple: true
 
-      - name: Create Release
-        uses: softprops/action-gh-release@v1
-        with:
-          files: binaries/*
-          generate_release_notes: true
+      - name: Upload assets to release
+        run: gh release upload ${{ needs.tagpr.outputs.tag }} binaries/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

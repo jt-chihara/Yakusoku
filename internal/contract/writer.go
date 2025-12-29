@@ -17,7 +17,7 @@ func NewWriter() *Writer {
 }
 
 // Write writes a contract to a file.
-func (w *Writer) Write(c Contract, path string) error {
+func (w *Writer) Write(c *Contract, path string) error {
 	data, err := w.WriteBytes(c)
 	if err != nil {
 		return err
@@ -25,11 +25,11 @@ func (w *Writer) Write(c Contract, path string) error {
 
 	// Create directory if needed
 	dir := filepath.Dir(path)
-	if err := os.MkdirAll(dir, 0755); err != nil {
+	if err := os.MkdirAll(dir, 0o755); err != nil {
 		return fmt.Errorf("failed to create directory: %w", err)
 	}
 
-	if err := os.WriteFile(path, data, 0644); err != nil {
+	if err := os.WriteFile(path, data, 0o644); err != nil {
 		return fmt.Errorf("failed to write contract file: %w", err)
 	}
 
@@ -37,7 +37,7 @@ func (w *Writer) Write(c Contract, path string) error {
 }
 
 // WriteToDir writes a contract to a directory with auto-generated filename.
-func (w *Writer) WriteToDir(c Contract, dir string) (string, error) {
+func (w *Writer) WriteToDir(c *Contract, dir string) (string, error) {
 	filename := w.generateFilename(c.Consumer.Name, c.Provider.Name)
 	path := filepath.Join(dir, filename)
 
@@ -49,7 +49,7 @@ func (w *Writer) WriteToDir(c Contract, dir string) (string, error) {
 }
 
 // WriteBytes returns a contract as bytes.
-func (w *Writer) WriteBytes(c Contract) ([]byte, error) {
+func (w *Writer) WriteBytes(c *Contract) ([]byte, error) {
 	data, err := json.MarshalIndent(c, "", "  ")
 	if err != nil {
 		return nil, fmt.Errorf("failed to marshal contract: %w", err)

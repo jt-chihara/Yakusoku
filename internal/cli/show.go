@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
+
 	"github.com/jt-chihara/yakusoku/internal/contract"
 )
 
@@ -23,7 +24,7 @@ func NewShowCommand() *cobra.Command {
 	}
 
 	cmd.Flags().StringVar(&pactFile, "pact-file", "", "Path to the contract file (required)")
-	cmd.MarkFlagRequired("pact-file")
+	_ = cmd.MarkFlagRequired("pact-file")
 	cmd.Flags().BoolVar(&jsonOutput, "json", false, "Output in JSON format")
 
 	return cmd
@@ -50,7 +51,8 @@ func runShow(cmd *cobra.Command, pactFile string, jsonOutput bool) error {
 	fmt.Fprintln(cmd.OutOrStdout(), "")
 
 	fmt.Fprintf(cmd.OutOrStdout(), "Interactions (%d):\n", len(c.Interactions))
-	for i, interaction := range c.Interactions {
+	for i := range c.Interactions {
+		interaction := &c.Interactions[i]
 		fmt.Fprintf(cmd.OutOrStdout(), "\n  [%d] %s\n", i+1, interaction.Description)
 		if interaction.ProviderState != "" {
 			fmt.Fprintf(cmd.OutOrStdout(), "      Provider State: %s\n", interaction.ProviderState)

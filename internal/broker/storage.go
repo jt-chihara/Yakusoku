@@ -39,7 +39,7 @@ func NewMemoryStorage() *MemoryStorage {
 }
 
 // SaveContract saves a contract to storage
-func (s *MemoryStorage) SaveContract(c contract.Contract) error {
+func (s *MemoryStorage) SaveContract(c *contract.Contract) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
@@ -47,7 +47,7 @@ func (s *MemoryStorage) SaveContract(c contract.Contract) error {
 	key := contractKey(c.Consumer.Name, c.Provider.Name, version)
 	pk := pairKey(c.Consumer.Name, c.Provider.Name)
 
-	s.contracts[key] = c
+	s.contracts[key] = *c
 
 	// Update version list
 	versions := s.versions[pk]
@@ -130,21 +130,22 @@ func (s *MemoryStorage) GetContractsByProvider(provider string) []contract.Contr
 	seen := make(map[string]bool)
 
 	for _, c := range s.contracts {
-		if c.Provider.Name == provider {
-			pk := pairKey(c.Consumer.Name, c.Provider.Name)
-			if seen[pk] {
-				continue
-			}
-			seen[pk] = true
+		if c.Provider.Name != provider {
+			continue
+		}
+		pk := pairKey(c.Consumer.Name, c.Provider.Name)
+		if seen[pk] {
+			continue
+		}
+		seen[pk] = true
 
-			// Get latest version for this pair
-			versions := s.versions[pk]
-			if len(versions) > 0 {
-				latestVersion := versions[len(versions)-1]
-				key := contractKey(c.Consumer.Name, c.Provider.Name, latestVersion)
-				if latest, ok := s.contracts[key]; ok {
-					result = append(result, latest)
-				}
+		// Get latest version for this pair
+		versions := s.versions[pk]
+		if len(versions) > 0 {
+			latestVersion := versions[len(versions)-1]
+			key := contractKey(c.Consumer.Name, c.Provider.Name, latestVersion)
+			if latest, ok := s.contracts[key]; ok {
+				result = append(result, latest)
 			}
 		}
 	}
@@ -161,21 +162,22 @@ func (s *MemoryStorage) GetContractsByConsumer(consumer string) []contract.Contr
 	seen := make(map[string]bool)
 
 	for _, c := range s.contracts {
-		if c.Consumer.Name == consumer {
-			pk := pairKey(c.Consumer.Name, c.Provider.Name)
-			if seen[pk] {
-				continue
-			}
-			seen[pk] = true
+		if c.Consumer.Name != consumer {
+			continue
+		}
+		pk := pairKey(c.Consumer.Name, c.Provider.Name)
+		if seen[pk] {
+			continue
+		}
+		seen[pk] = true
 
-			// Get latest version for this pair
-			versions := s.versions[pk]
-			if len(versions) > 0 {
-				latestVersion := versions[len(versions)-1]
-				key := contractKey(c.Consumer.Name, c.Provider.Name, latestVersion)
-				if latest, ok := s.contracts[key]; ok {
-					result = append(result, latest)
-				}
+		// Get latest version for this pair
+		versions := s.versions[pk]
+		if len(versions) > 0 {
+			latestVersion := versions[len(versions)-1]
+			key := contractKey(c.Consumer.Name, c.Provider.Name, latestVersion)
+			if latest, ok := s.contracts[key]; ok {
+				result = append(result, latest)
 			}
 		}
 	}
@@ -222,17 +224,17 @@ func (s *MemoryStorage) RecordVerification(consumer, provider, version string, s
 
 // GetVerification gets verification status
 // Returns (success, exists)
-func (s *MemoryStorage) GetVerification(consumer, provider, version string) (bool, bool) {
+func (s *MemoryStorage) GetVerification(consumer, provider, version string) (success, exists bool) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 
 	key := contractKey(consumer, provider, version)
-	success, exists := s.verifications[key]
+	success, exists = s.verifications[key]
 	return success, exists
 }
 
 // IsDeployable checks if a pacticipant version can be deployed
-func (s *MemoryStorage) IsDeployable(pacticipant, version string) (bool, string) {
+func (s *MemoryStorage) IsDeployable(pacticipant, version string) (deployable bool, reason string) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 

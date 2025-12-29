@@ -27,10 +27,10 @@ func NewHandler() *Handler {
 }
 
 // RegisterInteraction registers an interaction.
-func (h *Handler) RegisterInteraction(i contract.Interaction) {
+func (h *Handler) RegisterInteraction(i *contract.Interaction) {
 	h.mu.Lock()
 	defer h.mu.Unlock()
-	h.interactions = append(h.interactions, i)
+	h.interactions = append(h.interactions, *i)
 }
 
 // ClearInteractions clears all interactions.
@@ -47,10 +47,10 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	defer h.mu.Unlock()
 
 	// Find matching interaction
-	for _, interaction := range h.interactions {
-		if h.matchRequest(r, interaction.Request) {
-			h.recorded = append(h.recorded, interaction)
-			h.writeResponse(w, interaction.Response)
+	for i := range h.interactions {
+		if h.matchRequest(r, &h.interactions[i].Request) {
+			h.recorded = append(h.recorded, h.interactions[i])
+			h.writeResponse(w, &h.interactions[i].Response)
 			return
 		}
 	}
@@ -69,7 +69,7 @@ func (h *Handler) RecordedInteractions() []contract.Interaction {
 	return result
 }
 
-func (h *Handler) matchRequest(r *http.Request, expected contract.Request) bool {
+func (h *Handler) matchRequest(r *http.Request, expected *contract.Request) bool {
 	// Match method
 	if !strings.EqualFold(r.Method, expected.Method) {
 		return false
@@ -103,7 +103,7 @@ func (h *Handler) matchRequest(r *http.Request, expected contract.Request) bool 
 	return true
 }
 
-func (h *Handler) writeResponse(w http.ResponseWriter, resp contract.Response) {
+func (h *Handler) writeResponse(w http.ResponseWriter, resp *contract.Response) {
 	// Set headers
 	for key, value := range resp.Headers {
 		w.Header().Set(key, fmt.Sprintf("%v", value))
@@ -116,9 +116,9 @@ func (h *Handler) writeResponse(w http.ResponseWriter, resp contract.Response) {
 	if resp.Body != nil {
 		switch body := resp.Body.(type) {
 		case string:
-			io.WriteString(w, body)
+			_, _ = io.WriteString(w, body)
 		default:
-			json.NewEncoder(w).Encode(body)
+			_ = json.NewEncoder(w).Encode(body)
 		}
 	}
 }

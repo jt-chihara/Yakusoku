@@ -56,14 +56,14 @@ func handleGetUser(w http.ResponseWriter, r *http.Request) {
 	if !exists {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusNotFound)
-		json.NewEncoder(w).Encode(map[string]string{
+		_ = json.NewEncoder(w).Encode(map[string]string{
 			"error": "User not found",
 		})
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(user)
+	_ = json.NewEncoder(w).Encode(user)
 }
 
 func handleListUsers(w http.ResponseWriter, r *http.Request) {
@@ -73,7 +73,7 @@ func handleListUsers(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(userList)
+	_ = json.NewEncoder(w).Encode(userList)
 }
 
 func handleProviderStates(w http.ResponseWriter, r *http.Request) {

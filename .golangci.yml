@@ -36,11 +36,28 @@ linters-settings:
         severity: warning
       - name: var-naming
         severity: warning
+  errcheck:
+    exclude-functions:
+      - fmt.Fprintf
+      - fmt.Fprintln
+      - fmt.Printf
+      - fmt.Println
+      - (io.Closer).Close
+      - (*os.File).Close
+      - (net/http.ResponseWriter).Write
 
 issues:
   exclude-rules:
-    # Exclude some linters from running on tests files
     - path: _test\.go
       linters:
         - errcheck
         - gocritic
+        - revive
+    - path: examples/
+      linters:
+        - errcheck
+        - revive
+    - path: sdk/go/examples/
+      linters:
+        - errcheck
+        - revive

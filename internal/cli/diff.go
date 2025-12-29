@@ -6,6 +6,7 @@ import (
 	"reflect"
 
 	"github.com/spf13/cobra"
+
 	"github.com/jt-chihara/yakusoku/internal/contract"
 )
 
@@ -26,8 +27,8 @@ func NewDiffCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&oldFile, "old", "", "Path to the old contract file (required)")
 	cmd.Flags().StringVar(&newFile, "new", "", "Path to the new contract file (required)")
-	cmd.MarkFlagRequired("old")
-	cmd.MarkFlagRequired("new")
+	_ = cmd.MarkFlagRequired("old")
+	_ = cmd.MarkFlagRequired("new")
 	cmd.Flags().BoolVar(&jsonOutput, "json", false, "Output in JSON format")
 
 	return cmd
@@ -130,14 +131,14 @@ func compareContracts(oldContract, newContract *contract.Contract) diffResult {
 	}
 
 	// Build maps of interactions by description
-	oldInteractions := make(map[string]contract.Interaction)
-	for _, i := range oldContract.Interactions {
-		oldInteractions[i.Description] = i
+	oldInteractions := make(map[string]*contract.Interaction)
+	for i := range oldContract.Interactions {
+		oldInteractions[oldContract.Interactions[i].Description] = &oldContract.Interactions[i]
 	}
 
-	newInteractions := make(map[string]contract.Interaction)
-	for _, i := range newContract.Interactions {
-		newInteractions[i.Description] = i
+	newInteractions := make(map[string]*contract.Interaction)
+	for i := range newContract.Interactions {
+		newInteractions[newContract.Interactions[i].Description] = &newContract.Interactions[i]
 	}
 
 	// Find added interactions
@@ -169,7 +170,7 @@ func compareContracts(oldContract, newContract *contract.Contract) diffResult {
 	return result
 }
 
-func interactionsEqual(a, b contract.Interaction) bool {
+func interactionsEqual(a, b *contract.Interaction) bool {
 	// Compare request
 	if a.Request.Method != b.Request.Method ||
 		a.Request.Path != b.Request.Path {

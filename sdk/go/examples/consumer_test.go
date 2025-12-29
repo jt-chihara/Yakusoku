@@ -229,13 +229,19 @@ func TestMultipleInteractions(t *testing.T) {
 
 	err := pact.Verify(func() error {
 		// Call first endpoint
-		resp1, _ := http.Get(pact.ServerURL() + "/users/1")
+		resp1, err := http.Get(pact.ServerURL() + "/users/1")
+		if err != nil {
+			return err
+		}
 		defer resp1.Body.Close()
 		body1, _ := io.ReadAll(resp1.Body)
 		t.Logf("User response: %s", body1)
 
 		// Call second endpoint
-		resp2, _ := http.Get(pact.ServerURL() + "/users/1/orders")
+		resp2, err := http.Get(pact.ServerURL() + "/users/1/orders")
+		if err != nil {
+			return err
+		}
 		defer resp2.Body.Close()
 		body2, _ := io.ReadAll(resp2.Body)
 		t.Logf("Orders response: %s", body2)
