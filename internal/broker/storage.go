@@ -11,6 +11,19 @@ import (
 // ErrNotFound indicates that the requested contract was not found
 var ErrNotFound = errors.New("contract not found")
 
+// Storage defines the interface for contract storage backends
+type Storage interface {
+	SaveContract(c *contract.Contract) error
+	GetContract(consumer, provider, version string) (*contract.Contract, error)
+	ListContracts() []contract.Contract
+	GetContractsByProvider(provider string) []contract.Contract
+	GetContractsByConsumer(consumer string) []contract.Contract
+	DeleteContract(consumer, provider, version string) error
+	RecordVerification(consumer, provider, version string, success bool) error
+	GetVerification(consumer, provider, version string) (success, exists bool)
+	IsDeployable(pacticipant, version string) (deployable bool, reason string)
+}
+
 // contractKey generates a unique key for a contract
 func contractKey(consumer, provider, version string) string {
 	return consumer + "|" + provider + "|" + version

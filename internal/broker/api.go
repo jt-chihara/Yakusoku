@@ -4,16 +4,17 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/jt-chihara/yakusoku/internal/broker/ui"
 	"github.com/jt-chihara/yakusoku/internal/contract"
 )
 
 // API is the HTTP API for the broker
 type API struct {
-	storage *MemoryStorage
+	storage Storage
 }
 
 // NewAPI creates a new broker API
-func NewAPI(storage *MemoryStorage) *API {
+func NewAPI(storage Storage) *API {
 	return &API{storage: storage}
 }
 
@@ -45,6 +46,10 @@ func (a *API) Handler() http.Handler {
 
 	// Matrix / Can I Deploy
 	mux.HandleFunc("GET /matrix", a.handleMatrix)
+
+	// Web UI
+	mux.Handle("/ui", ui.Handler())
+	mux.Handle("/ui/", ui.Handler())
 
 	return mux
 }

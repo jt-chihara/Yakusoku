@@ -1,0 +1,42 @@
+# Build artifacts
+bin/
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Test files
+*.test
+coverage.out
+coverage.html
+
+# IDE and editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# Node modules (will be installed in Docker)
+web/node_modules/
+web/dist/
+
+# Documentation
+*.md
+!README.md
+
+# Docker files (don't need to copy these into the image)
+docker-compose.yml
+Dockerfile
+.dockerignore
+
+# LocalStack data
+localstack-data/

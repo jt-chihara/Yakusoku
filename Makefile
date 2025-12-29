@@ -1,6 +1,6 @@
 # Yakusoku Makefile
 
-.PHONY: all build build-cli build-broker test lint clean install help
+.PHONY: all build build-cli build-broker build-ui test lint clean install help
 
 # Default target
 all: lint test build
@@ -12,7 +12,13 @@ build-cli:
 	@echo "Building yakusoku CLI..."
 	go build -o bin/yakusoku ./cmd/yakusoku
 
-build-broker:
+build-ui:
+	@echo "Building Web UI..."
+	cd web && pnpm install && pnpm build
+	rm -rf internal/broker/ui/dist
+	cp -r web/dist internal/broker/ui/
+
+build-broker: build-ui
 	@echo "Building yakusoku-broker..."
 	go build -o bin/yakusoku-broker ./cmd/yakusoku-broker
 
@@ -55,6 +61,7 @@ clean:
 	@echo "Cleaning build artifacts..."
 	rm -rf bin/
 	rm -f coverage.out coverage.html
+	rm -rf web/dist web/node_modules
 
 # Install targets
 install: build
@@ -74,7 +81,8 @@ help:
 	@echo "  all            - Run lint, test, and build (default)"
 	@echo "  build          - Build CLI and Broker binaries"
 	@echo "  build-cli      - Build yakusoku CLI"
-	@echo "  build-broker   - Build yakusoku-broker server"
+	@echo "  build-ui       - Build Web UI (requires pnpm)"
+	@echo "  build-broker   - Build yakusoku-broker server (includes UI)"
 	@echo "  test           - Run all tests"
 	@echo "  test-coverage  - Run tests with coverage report"
 	@echo "  test-unit      - Run unit tests only"
