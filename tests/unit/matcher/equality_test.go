@@ -3,9 +3,10 @@ package matcher_test
 import (
 	"testing"
 
-	"github.com/jt-chihara/yakusoku/internal/matcher"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
+	"github.com/jt-chihara/yakusoku/internal/matcher"
 )
 
 func TestEqualityMatcher_Match(t *testing.T) {

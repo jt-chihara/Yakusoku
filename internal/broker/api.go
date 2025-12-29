@@ -124,7 +124,7 @@ func (a *API) handlePublishContract(w http.ResponseWriter, r *http.Request) {
 	c.Provider.Name = r.PathValue("provider")
 	c.Metadata.PactSpecification.Version = r.PathValue("version")
 
-	if err := a.storage.SaveContract(c); err != nil {
+	if err := a.storage.SaveContract(&c); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

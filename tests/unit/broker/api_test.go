@@ -7,10 +7,11 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/jt-chihara/yakusoku/internal/broker"
-	"github.com/jt-chihara/yakusoku/internal/contract"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
+	"github.com/jt-chihara/yakusoku/internal/broker"
+	"github.com/jt-chihara/yakusoku/internal/contract"
 )
 
 func TestAPI_PublishContract(t *testing.T) {

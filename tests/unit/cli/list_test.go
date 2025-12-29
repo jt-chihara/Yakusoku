@@ -7,9 +7,10 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/jt-chihara/yakusoku/internal/cli"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
+	"github.com/jt-chihara/yakusoku/internal/cli"
 )
 
 func TestListCommand_Execute(t *testing.T) {

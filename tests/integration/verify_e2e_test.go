@@ -7,10 +7,11 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/jt-chihara/yakusoku/internal/contract"
-	"github.com/jt-chihara/yakusoku/internal/verifier"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
+	"github.com/jt-chihara/yakusoku/internal/contract"
+	"github.com/jt-chihara/yakusoku/internal/verifier"
 )
 
 func TestVerifyE2E_SuccessfulVerification(t *testing.T) {
@@ -86,7 +87,7 @@ func TestVerifyE2E_SuccessfulVerification(t *testing.T) {
 		ProviderBaseURL: provider.URL,
 	})
 
-	result, err := v.Verify(c)
+	result, err := v.Verify(&c)
 	require.NoError(t, err)
 	assert.True(t, result.Success)
 	assert.Len(t, result.Interactions, 2)
@@ -125,7 +126,7 @@ func TestVerifyE2E_FailedVerification(t *testing.T) {
 
 	v := verifier.New(verifier.Config{ProviderBaseURL: provider.URL})
 
-	result, err := v.Verify(c)
+	result, err := v.Verify(&c)
 	require.NoError(t, err)
 	assert.False(t, result.Success)
 	assert.False(t, result.Interactions[0].Success)
@@ -177,7 +178,7 @@ func TestVerifyE2E_WithProviderStates(t *testing.T) {
 		ProviderStatesSetupURL: statesServer.URL,
 	})
 
-	result, err := v.Verify(c)
+	result, err := v.Verify(&c)
 	require.NoError(t, err)
 	assert.True(t, result.Success)
 
@@ -221,7 +222,7 @@ func TestVerifyE2E_FromContractFile(t *testing.T) {
 	require.NoError(t, err)
 
 	v := verifier.New(verifier.Config{ProviderBaseURL: provider.URL})
-	result, err := v.Verify(*parsed)
+	result, err := v.Verify(parsed)
 	require.NoError(t, err)
 	assert.True(t, result.Success)
 }
@@ -256,7 +257,7 @@ func TestVerifyE2E_PartialFailure(t *testing.T) {
 
 	v := verifier.New(verifier.Config{ProviderBaseURL: provider.URL})
 
-	result, err := v.Verify(c)
+	result, err := v.Verify(&c)
 	require.NoError(t, err)
 	assert.False(t, result.Success)
 

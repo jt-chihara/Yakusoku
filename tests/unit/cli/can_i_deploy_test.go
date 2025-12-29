@@ -7,9 +7,10 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/jt-chihara/yakusoku/internal/cli"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
+	"github.com/jt-chihara/yakusoku/internal/cli"
 )
 
 func TestCanIDeployCommand_Execute(t *testing.T) {
