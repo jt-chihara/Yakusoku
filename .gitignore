@@ -38,9 +38,13 @@ Thumbs.db
 .env.*.local
 
 # Build output
-dist/
+web/dist/
 build/
 bin/
+
+# Broker UI dist (built files ignored, keep placeholder for go:embed)
+internal/broker/ui/dist/*
+!internal/broker/ui/dist/.gitkeep
 
 # Logs
 *.log
