@@ -16,7 +16,7 @@ import (
 func TestHandler_MatchRequest(t *testing.T) {
 	t.Run("matches GET request by method and path", func(t *testing.T) {
 		handler := mock.NewHandler()
-		handler.RegisterInteraction(contract.Interaction{
+		handler.RegisterInteraction(&contract.Interaction{
 			Description: "get user",
 			Request:     contract.Request{Method: "GET", Path: "/users/1"},
 			Response:    contract.Response{Status: 200},
@@ -31,7 +31,7 @@ func TestHandler_MatchRequest(t *testing.T) {
 
 	t.Run("matches POST request with body", func(t *testing.T) {
 		handler := mock.NewHandler()
-		handler.RegisterInteraction(contract.Interaction{
+		handler.RegisterInteraction(&contract.Interaction{
 			Description: "create user",
 			Request: contract.Request{
 				Method: "POST",
@@ -55,7 +55,7 @@ func TestHandler_MatchRequest(t *testing.T) {
 
 	t.Run("does not match different method", func(t *testing.T) {
 		handler := mock.NewHandler()
-		handler.RegisterInteraction(contract.Interaction{
+		handler.RegisterInteraction(&contract.Interaction{
 			Description: "get user",
 			Request:     contract.Request{Method: "GET", Path: "/users/1"},
 			Response:    contract.Response{Status: 200},
@@ -70,7 +70,7 @@ func TestHandler_MatchRequest(t *testing.T) {
 
 	t.Run("does not match different path", func(t *testing.T) {
 		handler := mock.NewHandler()
-		handler.RegisterInteraction(contract.Interaction{
+		handler.RegisterInteraction(&contract.Interaction{
 			Description: "get user",
 			Request:     contract.Request{Method: "GET", Path: "/users/1"},
 			Response:    contract.Response{Status: 200},
@@ -85,7 +85,7 @@ func TestHandler_MatchRequest(t *testing.T) {
 
 	t.Run("matches request with headers", func(t *testing.T) {
 		handler := mock.NewHandler()
-		handler.RegisterInteraction(contract.Interaction{
+		handler.RegisterInteraction(&contract.Interaction{
 			Description: "get user with auth",
 			Request: contract.Request{
 				Method: "GET",
@@ -107,7 +107,7 @@ func TestHandler_MatchRequest(t *testing.T) {
 
 	t.Run("matches request with query params", func(t *testing.T) {
 		handler := mock.NewHandler()
-		handler.RegisterInteraction(contract.Interaction{
+		handler.RegisterInteraction(&contract.Interaction{
 			Description: "search users",
 			Request: contract.Request{
 				Method: "GET",
@@ -128,7 +128,7 @@ func TestHandler_MatchRequest(t *testing.T) {
 func TestHandler_ResponseBody(t *testing.T) {
 	t.Run("returns JSON body", func(t *testing.T) {
 		handler := mock.NewHandler()
-		handler.RegisterInteraction(contract.Interaction{
+		handler.RegisterInteraction(&contract.Interaction{
 			Description: "get user",
 			Request:     contract.Request{Method: "GET", Path: "/users/1"},
 			Response: contract.Response{
@@ -156,7 +156,7 @@ func TestHandler_ResponseBody(t *testing.T) {
 
 	t.Run("returns array body", func(t *testing.T) {
 		handler := mock.NewHandler()
-		handler.RegisterInteraction(contract.Interaction{
+		handler.RegisterInteraction(&contract.Interaction{
 			Description: "list users",
 			Request:     contract.Request{Method: "GET", Path: "/users"},
 			Response: contract.Response{
@@ -179,7 +179,7 @@ func TestHandler_ResponseBody(t *testing.T) {
 
 	t.Run("returns string body", func(t *testing.T) {
 		handler := mock.NewHandler()
-		handler.RegisterInteraction(contract.Interaction{
+		handler.RegisterInteraction(&contract.Interaction{
 			Description: "get text",
 			Request:     contract.Request{Method: "GET", Path: "/text"},
 			Response: contract.Response{
@@ -203,7 +203,7 @@ func TestHandler_ResponseBody(t *testing.T) {
 func TestHandler_ResponseHeaders(t *testing.T) {
 	t.Run("sets response headers", func(t *testing.T) {
 		handler := mock.NewHandler()
-		handler.RegisterInteraction(contract.Interaction{
+		handler.RegisterInteraction(&contract.Interaction{
 			Description: "get user",
 			Request:     contract.Request{Method: "GET", Path: "/users/1"},
 			Response: contract.Response{
@@ -227,12 +227,12 @@ func TestHandler_ResponseHeaders(t *testing.T) {
 func TestHandler_MatchFirstMatchingInteraction(t *testing.T) {
 	t.Run("uses first matching interaction when multiple match", func(t *testing.T) {
 		handler := mock.NewHandler()
-		handler.RegisterInteraction(contract.Interaction{
+		handler.RegisterInteraction(&contract.Interaction{
 			Description: "first match",
 			Request:     contract.Request{Method: "GET", Path: "/test"},
 			Response:    contract.Response{Status: 200},
 		})
-		handler.RegisterInteraction(contract.Interaction{
+		handler.RegisterInteraction(&contract.Interaction{
 			Description: "second match",
 			Request:     contract.Request{Method: "GET", Path: "/test"},
 			Response:    contract.Response{Status: 201},

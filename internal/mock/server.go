@@ -80,7 +80,7 @@ func (s *Server) URL() string {
 }
 
 // RegisterInteraction registers an interaction with the mock server.
-func (s *Server) RegisterInteraction(i contract.Interaction) {
+func (s *Server) RegisterInteraction(i *contract.Interaction) {
 	s.handler.RegisterInteraction(i)
 }
 

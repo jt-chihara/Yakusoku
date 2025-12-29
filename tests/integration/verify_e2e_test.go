@@ -212,7 +212,7 @@ func TestVerifyE2E_FromContractFile(t *testing.T) {
 	}
 
 	writer := contract.NewWriter()
-	err := writer.Write(c, contractPath)
+	err := writer.Write(&c, contractPath)
 	require.NoError(t, err)
 
 	// Parse and verify

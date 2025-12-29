@@ -78,7 +78,7 @@ func TestMockServer_RegisterInteraction(t *testing.T) {
 			},
 		}
 
-		server.RegisterInteraction(interaction)
+		server.RegisterInteraction(&interaction)
 
 		resp, err := http.Get(server.URL() + "/users/1")
 		require.NoError(t, err)
@@ -111,12 +111,12 @@ func TestMockServer_RegisterInteraction(t *testing.T) {
 		require.NoError(t, err)
 		defer server.Stop()
 
-		server.RegisterInteraction(contract.Interaction{
+		server.RegisterInteraction(&contract.Interaction{
 			Description: "get user 1",
 			Request:     contract.Request{Method: "GET", Path: "/users/1"},
 			Response:    contract.Response{Status: 200, Body: map[string]interface{}{"id": float64(1)}},
 		})
-		server.RegisterInteraction(contract.Interaction{
+		server.RegisterInteraction(&contract.Interaction{
 			Description: "get user 2",
 			Request:     contract.Request{Method: "GET", Path: "/users/2"},
 			Response:    contract.Response{Status: 200, Body: map[string]interface{}{"id": float64(2)}},
@@ -141,7 +141,7 @@ func TestMockServer_ClearInteractions(t *testing.T) {
 		require.NoError(t, err)
 		defer server.Stop()
 
-		server.RegisterInteraction(contract.Interaction{
+		server.RegisterInteraction(&contract.Interaction{
 			Description: "get user 1",
 			Request:     contract.Request{Method: "GET", Path: "/users/1"},
 			Response:    contract.Response{Status: 200},
@@ -170,7 +170,7 @@ func TestMockServer_RecordedInteractions(t *testing.T) {
 		require.NoError(t, err)
 		defer server.Stop()
 
-		server.RegisterInteraction(contract.Interaction{
+		server.RegisterInteraction(&contract.Interaction{
 			Description: "get user 1",
 			Request:     contract.Request{Method: "GET", Path: "/users/1"},
 			Response:    contract.Response{Status: 200},
