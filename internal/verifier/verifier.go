@@ -53,14 +53,14 @@ func New(config Config) *Verifier {
 }
 
 // Verify verifies a contract against the provider.
-func (v *Verifier) Verify(c contract.Contract) (*VerificationResult, error) {
+func (v *Verifier) Verify(c *contract.Contract) (*VerificationResult, error) {
 	result := &VerificationResult{
 		Success:      true,
 		Interactions: make([]InteractionResult, 0, len(c.Interactions)),
 	}
 
-	for _, interaction := range c.Interactions {
-		ir := v.verifyInteraction(interaction)
+	for i := range c.Interactions {
+		ir := v.verifyInteraction(&c.Interactions[i])
 		result.Interactions = append(result.Interactions, ir)
 		if !ir.Success {
 			result.Success = false
@@ -70,7 +70,7 @@ func (v *Verifier) Verify(c contract.Contract) (*VerificationResult, error) {
 	return result, nil
 }
 
-func (v *Verifier) verifyInteraction(interaction contract.Interaction) InteractionResult {
+func (v *Verifier) verifyInteraction(interaction *contract.Interaction) InteractionResult {
 	ir := InteractionResult{
 		Description:   interaction.Description,
 		RequestMethod: interaction.Request.Method,
@@ -93,7 +93,7 @@ func (v *Verifier) verifyInteraction(interaction contract.Interaction) Interacti
 
 	// Make request to provider
 	url := v.config.ProviderBaseURL + interaction.Request.Path
-	req, err := http.NewRequest(interaction.Request.Method, url, nil)
+	req, err := http.NewRequest(interaction.Request.Method, url, http.NoBody)
 	if err != nil {
 		ir.Error = fmt.Sprintf("failed to create request: %v", err)
 		return ir

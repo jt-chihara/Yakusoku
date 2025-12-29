@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+
 	"github.com/jt-chihara/yakusoku/internal/verifier"
 )
 
@@ -23,7 +24,7 @@ func TestReporter_Report(t *testing.T) {
 			},
 		}
 
-		reporter.Report(result)
+		reporter.Report(&result)
 		output := buf.String()
 
 		assert.Contains(t, output, "get user 1")
@@ -45,7 +46,7 @@ func TestReporter_Report(t *testing.T) {
 			},
 		}
 
-		reporter.Report(result)
+		reporter.Report(&result)
 		output := buf.String()
 
 		assert.Contains(t, output, "get user 1")
@@ -65,7 +66,7 @@ func TestReporter_Report(t *testing.T) {
 			},
 		}
 
-		reporter.Report(result)
+		reporter.Report(&result)
 		output := buf.String()
 
 		assert.Contains(t, output, "interaction 1")
@@ -84,7 +85,7 @@ func TestReporter_Report(t *testing.T) {
 			},
 		}
 
-		reporter.Report(result)
+		reporter.Report(&result)
 		output := buf.String()
 
 		assert.Contains(t, output, "2")
@@ -105,7 +106,7 @@ func TestReporter_Report(t *testing.T) {
 			},
 		}
 
-		reporter.Report(result)
+		reporter.Report(&result)
 		output := buf.String()
 
 		assert.Contains(t, output, "connection refused")
@@ -131,7 +132,7 @@ func TestReporter_VerboseMode(t *testing.T) {
 			},
 		}
 
-		reporter.Report(result)
+		reporter.Report(&result)
 		output := buf.String()
 
 		assert.Contains(t, output, "GET")

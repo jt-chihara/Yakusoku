@@ -30,11 +30,10 @@ type Pact struct {
 }
 
 type interactionBuilder struct {
-	providerState  string
-	providerStates []contract.ProviderState
-	description    string
-	request        contract.Request
-	response       contract.Response
+	providerState string
+	description   string
+	request       contract.Request
+	response      contract.Response
 }
 
 // NewPact creates a new Pact instance.
@@ -128,8 +127,8 @@ func (p *Pact) ServerURL() string {
 // Verify runs the verification callback with the mock server.
 func (p *Pact) Verify(callback func() error) error {
 	// Register all interactions with the mock server
-	for _, interaction := range p.interactions {
-		p.server.RegisterInteraction(interaction)
+	for i := range p.interactions {
+		p.server.RegisterInteraction(&p.interactions[i])
 	}
 
 	// Start the server
@@ -157,7 +156,7 @@ func (p *Pact) Verify(callback func() error) error {
 		},
 	}
 
-	if _, err := writer.WriteToDir(c, p.config.PactDir); err != nil {
+	if _, err := writer.WriteToDir(&c, p.config.PactDir); err != nil {
 		return err
 	}
 
@@ -167,7 +166,7 @@ func (p *Pact) Verify(callback func() error) error {
 // Teardown stops the mock server and cleans up.
 func (p *Pact) Teardown() {
 	if p.server != nil {
-		p.server.Stop()
+		_ = p.server.Stop()
 	}
 }
 

@@ -87,7 +87,7 @@ func TestProviderVerification(t *testing.T) {
 		ProviderBaseURL: provider.URL,
 	})
 
-	result, err := v.Verify(*c)
+	result, err := v.Verify(c)
 	if err != nil {
 		t.Fatalf("verification failed: %v", err)
 	}
@@ -145,11 +145,11 @@ func TestProviderWithStates(t *testing.T) {
 
 	// Verify with provider states URL
 	v := verifier.New(verifier.Config{
-		ProviderBaseURL:       provider.URL,
+		ProviderBaseURL:        provider.URL,
 		ProviderStatesSetupURL: provider.URL + "/provider-states",
 	})
 
-	result, err := v.Verify(*c)
+	result, err := v.Verify(c)
 	if err != nil {
 		t.Fatalf("verification failed: %v", err)
 	}

@@ -5,6 +5,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
 	"github.com/jt-chihara/yakusoku/internal/contract"
 )
 
@@ -35,7 +36,7 @@ func TestValidator_Validate(t *testing.T) {
 		v := contract.NewValidator()
 		c := validContract()
 
-		err := v.Validate(c)
+		err := v.Validate(&c)
 		require.NoError(t, err)
 	})
 
@@ -44,7 +45,7 @@ func TestValidator_Validate(t *testing.T) {
 		c := validContract()
 		c.Consumer.Name = ""
 
-		err := v.Validate(c)
+		err := v.Validate(&c)
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), "consumer name")
 	})
@@ -54,7 +55,7 @@ func TestValidator_Validate(t *testing.T) {
 		c := validContract()
 		c.Provider.Name = ""
 
-		err := v.Validate(c)
+		err := v.Validate(&c)
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), "provider name")
 	})
@@ -64,7 +65,7 @@ func TestValidator_Validate(t *testing.T) {
 		c := validContract()
 		c.Interactions = []contract.Interaction{}
 
-		err := v.Validate(c)
+		err := v.Validate(&c)
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), "interaction")
 	})
@@ -74,7 +75,7 @@ func TestValidator_Validate(t *testing.T) {
 		c := validContract()
 		c.Interactions = nil
 
-		err := v.Validate(c)
+		err := v.Validate(&c)
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), "interaction")
 	})
@@ -84,7 +85,7 @@ func TestValidator_Validate(t *testing.T) {
 		c := validContract()
 		c.Interactions[0].Description = ""
 
-		err := v.Validate(c)
+		err := v.Validate(&c)
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), "description")
 	})
@@ -94,7 +95,7 @@ func TestValidator_Validate(t *testing.T) {
 		c := validContract()
 		c.Interactions[0].Request.Method = "INVALID"
 
-		err := v.Validate(c)
+		err := v.Validate(&c)
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), "method")
 	})
@@ -104,7 +105,7 @@ func TestValidator_Validate(t *testing.T) {
 		c := validContract()
 		c.Interactions[0].Request.Path = ""
 
-		err := v.Validate(c)
+		err := v.Validate(&c)
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), "path")
 	})
@@ -114,7 +115,7 @@ func TestValidator_Validate(t *testing.T) {
 		c := validContract()
 		c.Interactions[0].Request.Path = "users/1"
 
-		err := v.Validate(c)
+		err := v.Validate(&c)
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), "path")
 	})
@@ -124,7 +125,7 @@ func TestValidator_Validate(t *testing.T) {
 		c := validContract()
 		c.Interactions[0].Response.Status = 0
 
-		err := v.Validate(c)
+		err := v.Validate(&c)
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), "status")
 	})
@@ -134,7 +135,7 @@ func TestValidator_Validate(t *testing.T) {
 		c := validContract()
 		c.Interactions[0].Response.Status = 99
 
-		err := v.Validate(c)
+		err := v.Validate(&c)
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), "status")
 	})
@@ -144,7 +145,7 @@ func TestValidator_Validate(t *testing.T) {
 		c := validContract()
 		c.Interactions[0].Response.Status = 600
 
-		err := v.Validate(c)
+		err := v.Validate(&c)
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), "status")
 	})
@@ -154,7 +155,7 @@ func TestValidator_Validate(t *testing.T) {
 		c := validContract()
 		c.Consumer.Name = string(make([]byte, 256))
 
-		err := v.Validate(c)
+		err := v.Validate(&c)
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), "consumer name")
 	})
@@ -167,7 +168,7 @@ func TestValidator_Validate(t *testing.T) {
 			c := validContract()
 			c.Interactions[0].Request.Method = method
 
-			err := v.Validate(c)
+			err := v.Validate(&c)
 			assert.NoError(t, err, "method %s should be valid", method)
 		}
 	})
@@ -177,7 +178,7 @@ func TestValidator_Validate(t *testing.T) {
 		c := validContract()
 		c.Interactions[0].Request.Method = "get"
 
-		err := v.Validate(c)
+		err := v.Validate(&c)
 		require.NoError(t, err)
 	})
 
@@ -195,7 +196,7 @@ func TestValidator_Validate(t *testing.T) {
 			},
 		})
 
-		err := v.Validate(c)
+		err := v.Validate(&c)
 		require.NoError(t, err)
 	})
 
@@ -213,7 +214,7 @@ func TestValidator_Validate(t *testing.T) {
 			},
 		})
 
-		err := v.Validate(c)
+		err := v.Validate(&c)
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), "description")
 	})
@@ -230,7 +231,7 @@ func TestValidator_ValidateRequest(t *testing.T) {
 			},
 		}
 
-		err := v.ValidateRequest(r)
+		err := v.ValidateRequest(&r)
 		require.NoError(t, err)
 	})
 
@@ -242,7 +243,7 @@ func TestValidator_ValidateRequest(t *testing.T) {
 			Body:   map[string]interface{}{"name": "John"},
 		}
 
-		err := v.ValidateRequest(r)
+		err := v.ValidateRequest(&r)
 		require.NoError(t, err)
 	})
 
@@ -254,7 +255,7 @@ func TestValidator_ValidateRequest(t *testing.T) {
 			Query:  map[string][]string{"status": {"active", "pending"}},
 		}
 
-		err := v.ValidateRequest(r)
+		err := v.ValidateRequest(&r)
 		require.NoError(t, err)
 	})
 }
@@ -270,7 +271,7 @@ func TestValidator_ValidateResponse(t *testing.T) {
 			Body: map[string]interface{}{"id": 1},
 		}
 
-		err := v.ValidateResponse(r)
+		err := v.ValidateResponse(&r)
 		require.NoError(t, err)
 	})
 
@@ -290,7 +291,7 @@ func TestValidator_ValidateResponse(t *testing.T) {
 			},
 		}
 
-		err := v.ValidateResponse(r)
+		err := v.ValidateResponse(&r)
 		require.NoError(t, err)
 	})
 
@@ -300,7 +301,7 @@ func TestValidator_ValidateResponse(t *testing.T) {
 
 		for _, status := range validStatuses {
 			r := contract.Response{Status: status}
-			err := v.ValidateResponse(r)
+			err := v.ValidateResponse(&r)
 			assert.NoError(t, err, "status %d should be valid", status)
 		}
 	})
