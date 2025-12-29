@@ -5,8 +5,9 @@ import (
 	"fmt"
 	"reflect"
 
-	"github.com/jt-chihara/yakusoku/internal/contract"
 	"github.com/spf13/cobra"
+
+	"github.com/jt-chihara/yakusoku/internal/contract"
 )
 
 // NewDiffCommand creates the diff command

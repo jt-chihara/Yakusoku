@@ -53,7 +53,7 @@ func New(config Config) *Verifier {
 }
 
 // Verify verifies a contract against the provider.
-func (v *Verifier) Verify(c contract.Contract) (*VerificationResult, error) {
+func (v *Verifier) Verify(c *contract.Contract) (*VerificationResult, error) {
 	result := &VerificationResult{
 		Success:      true,
 		Interactions: make([]InteractionResult, 0, len(c.Interactions)),

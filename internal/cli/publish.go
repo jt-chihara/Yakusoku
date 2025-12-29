@@ -8,8 +8,9 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/jt-chihara/yakusoku/internal/contract"
 	"github.com/spf13/cobra"
+
+	"github.com/jt-chihara/yakusoku/internal/contract"
 )
 
 // NewPublishCommand creates the publish command

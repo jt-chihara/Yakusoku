@@ -1,6 +1,8 @@
 # golangci-lint configuration for Yakusoku
 # Run with: golangci-lint run
 
+version: "2"
+
 run:
   timeout: 5m
   tests: true
@@ -8,39 +10,56 @@ run:
 linters:
   enable:
     - errcheck
-    - gosimple
     - govet
     - ineffassign
     - staticcheck
     - unused
-    - gofmt
-    - goimports
     - misspell
     - unconvert
     - gocritic
     - revive
-
-linters-settings:
-  gofmt:
-    simplify: true
-  goimports:
-    local-prefixes: github.com/jt-chihara/yakusoku
-  gocritic:
-    enabled-tags:
-      - diagnostic
-      - style
-      - performance
-  revive:
+  settings:
+    errcheck:
+      exclude-functions:
+        - fmt.Fprintf
+        - fmt.Fprintln
+        - fmt.Printf
+        - fmt.Println
+        - (io.Closer).Close
+        - (*os.File).Close
+        - (net/http.ResponseWriter).Write
+    gocritic:
+      enabled-tags:
+        - diagnostic
+        - style
+        - performance
+    revive:
+      rules:
+        - name: exported
+          severity: warning
+        - name: var-naming
+          severity: warning
+  exclusions:
     rules:
-      - name: exported
-        severity: warning
-      - name: var-naming
-        severity: warning
+      - path: _test\.go
+        linters:
+          - errcheck
+          - gocritic
+          - revive
+      - path: examples/
+        linters:
+          - errcheck
+          - revive
+      - path: sdk/go/examples/
+        linters:
+          - errcheck
+          - revive
 
-issues:
-  exclude-rules:
-    # Exclude some linters from running on tests files
-    - path: _test\.go
-      linters:
-        - errcheck
-        - gocritic
+formatters:
+  enable:
+    - gofmt
+    - goimports
+  settings:
+    goimports:
+      local-prefixes:
+        - github.com/jt-chihara/yakusoku

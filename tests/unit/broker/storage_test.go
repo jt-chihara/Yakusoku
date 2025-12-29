@@ -3,10 +3,11 @@ package broker_test
 import (
 	"testing"
 
-	"github.com/jt-chihara/yakusoku/internal/broker"
-	"github.com/jt-chihara/yakusoku/internal/contract"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
+	"github.com/jt-chihara/yakusoku/internal/broker"
+	"github.com/jt-chihara/yakusoku/internal/contract"
 )
 
 func TestStorage_SaveContract(t *testing.T) {
@@ -31,8 +32,8 @@ func TestStorage_SaveContract(t *testing.T) {
 		c2 := createTestContract("Consumer", "Provider", "1.0.0")
 		c2.Interactions = []contract.Interaction{{Description: "new"}}
 
-		storage.SaveContract(c1)
-		storage.SaveContract(c2)
+		_ = storage.SaveContract(c1)
+		_ = storage.SaveContract(c2)
 
 		retrieved, _ := storage.GetContract("Consumer", "Provider", "1.0.0")
 		assert.Equal(t, "new", retrieved.Interactions[0].Description)
@@ -132,8 +133,8 @@ func TestStorage_DeleteContract(t *testing.T) {
 	})
 }
 
-func createTestContract(consumer, provider, version string) contract.Contract {
-	return contract.Contract{
+func createTestContract(consumer, provider, version string) *contract.Contract {
+	return &contract.Contract{
 		Consumer: contract.Pacticipant{Name: consumer},
 		Provider: contract.Pacticipant{Name: provider},
 		Interactions: []contract.Interaction{

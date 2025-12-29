@@ -4,8 +4,9 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/jt-chihara/yakusoku/internal/verifier"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/jt-chihara/yakusoku/internal/verifier"
 )
 
 func TestReporter_Report(t *testing.T) {

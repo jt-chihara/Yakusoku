@@ -39,7 +39,7 @@ func NewMemoryStorage() *MemoryStorage {
 }
 
 // SaveContract saves a contract to storage
-func (s *MemoryStorage) SaveContract(c contract.Contract) error {
+func (s *MemoryStorage) SaveContract(c *contract.Contract) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
@@ -47,7 +47,7 @@ func (s *MemoryStorage) SaveContract(c contract.Contract) error {
 	key := contractKey(c.Consumer.Name, c.Provider.Name, version)
 	pk := pairKey(c.Consumer.Name, c.Provider.Name)
 
-	s.contracts[key] = c
+	s.contracts[key] = *c
 
 	// Update version list
 	versions := s.versions[pk]
@@ -224,7 +224,7 @@ func (s *MemoryStorage) RecordVerification(consumer, provider, version string, s
 
 // GetVerification gets verification status
 // Returns (success, exists)
-func (s *MemoryStorage) GetVerification(consumer, provider, version string) (success bool, exists bool) {
+func (s *MemoryStorage) GetVerification(consumer, provider, version string) (success, exists bool) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 

@@ -7,10 +7,11 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/jt-chihara/yakusoku/internal/contract"
-	"github.com/jt-chihara/yakusoku/internal/mock"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
+	"github.com/jt-chihara/yakusoku/internal/contract"
+	"github.com/jt-chihara/yakusoku/internal/mock"
 )
 
 func TestHandler_MatchRequest(t *testing.T) {

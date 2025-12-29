@@ -5,9 +5,10 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/spf13/cobra"
+
 	"github.com/jt-chihara/yakusoku/internal/contract"
 	"github.com/jt-chihara/yakusoku/internal/verifier"
-	"github.com/spf13/cobra"
 )
 
 type verifyOptions struct {
@@ -68,7 +69,7 @@ func runVerify(cmd *cobra.Command, opts *verifyOptions) error {
 		ProviderStatesSetupURL: opts.providerStatesSetupURL,
 	})
 
-	result, err := v.Verify(*c)
+	result, err := v.Verify(c)
 	if err != nil {
 		return fmt.Errorf("verification failed: %w", err)
 	}
