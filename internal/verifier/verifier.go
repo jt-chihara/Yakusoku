@@ -2,6 +2,7 @@
 package verifier
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -93,7 +94,19 @@ func (v *Verifier) verifyInteraction(interaction *contract.Interaction) Interact
 
 	// Make request to provider
 	url := v.config.ProviderBaseURL + interaction.Request.Path
-	req, err := http.NewRequest(interaction.Request.Method, url, http.NoBody)
+
+	// Prepare request body if present
+	var bodyReader io.Reader = http.NoBody
+	if interaction.Request.Body != nil {
+		bodyBytes, err := json.Marshal(interaction.Request.Body)
+		if err != nil {
+			ir.Error = fmt.Sprintf("failed to marshal request body: %v", err)
+			return ir
+		}
+		bodyReader = bytes.NewReader(bodyBytes)
+	}
+
+	req, err := http.NewRequest(interaction.Request.Method, url, bodyReader)
 	if err != nil {
 		ir.Error = fmt.Sprintf("failed to create request: %v", err)
 		return ir
