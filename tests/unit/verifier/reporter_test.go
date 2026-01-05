@@ -231,10 +231,10 @@ func TestReporter_FailureDetails(t *testing.T) {
 			Success: false,
 			Interactions: []verifier.InteractionResult{
 				{
-					Description:   "get user 1",
-					Success:       false,
-					RequestMethod: "GET",
-					RequestPath:   "/users/1",
+					Description:    "get user 1",
+					Success:        false,
+					RequestMethod:  "GET",
+					RequestPath:    "/users/1",
 					ExpectedStatus: 200,
 					ExpectedHeaders: map[string]interface{}{
 						"Content-Type": "application/json",
