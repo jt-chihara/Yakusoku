@@ -254,4 +254,56 @@ func TestAPI_RecordVerification(t *testing.T) {
 
 		assert.Equal(t, http.StatusCreated, resp.StatusCode)
 	})
+
+	t.Run("returns error for invalid JSON", func(t *testing.T) {
+		storage := broker.NewMemoryStorage()
+		storage.SaveContract(createTestContract("Consumer", "Provider", "1.0.0"))
+
+		api := broker.NewAPI(storage)
+		server := httptest.NewServer(api.Handler())
+		defer server.Close()
+
+		resp, err := http.Post(
+			server.URL+"/pacts/provider/Provider/consumer/Consumer/version/1.0.0/verification-results",
+			"application/json",
+			bytes.NewReader([]byte("invalid json")),
+		)
+		require.NoError(t, err)
+		defer resp.Body.Close()
+
+		assert.Equal(t, http.StatusBadRequest, resp.StatusCode)
+	})
+}
+
+func TestAPI_GetLatestContract(t *testing.T) {
+	t.Run("returns 404 for non-existent latest contract", func(t *testing.T) {
+		api := broker.NewAPI(broker.NewMemoryStorage())
+		server := httptest.NewServer(api.Handler())
+		defer server.Close()
+
+		resp, err := http.Get(server.URL + "/pacts/provider/NonExistent/consumer/Unknown/latest")
+		require.NoError(t, err)
+		defer resp.Body.Close()
+
+		assert.Equal(t, http.StatusNotFound, resp.StatusCode)
+	})
+}
+
+func TestAPI_DeleteContract_Errors(t *testing.T) {
+	t.Run("returns 404 for non-existent contract", func(t *testing.T) {
+		api := broker.NewAPI(broker.NewMemoryStorage())
+		server := httptest.NewServer(api.Handler())
+		defer server.Close()
+
+		req, _ := http.NewRequest(
+			http.MethodDelete,
+			server.URL+"/pacts/provider/NonExistent/consumer/Unknown/version/1.0.0",
+			nil,
+		)
+		resp, err := http.DefaultClient.Do(req)
+		require.NoError(t, err)
+		defer resp.Body.Close()
+
+		assert.Equal(t, http.StatusNotFound, resp.StatusCode)
+	})
 }

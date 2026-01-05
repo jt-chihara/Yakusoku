@@ -133,6 +133,37 @@ func TestStorage_DeleteContract(t *testing.T) {
 	})
 }
 
+func TestStorage_RecordAndGetVerification(t *testing.T) {
+	t.Run("records and retrieves verification", func(t *testing.T) {
+		storage := broker.NewMemoryStorage()
+
+		err := storage.RecordVerification("Consumer", "Provider", "1.0.0", true)
+		require.NoError(t, err)
+
+		success, exists := storage.GetVerification("Consumer", "Provider", "1.0.0")
+		assert.True(t, exists)
+		assert.True(t, success)
+	})
+
+	t.Run("returns false for non-existent verification", func(t *testing.T) {
+		storage := broker.NewMemoryStorage()
+
+		_, exists := storage.GetVerification("Unknown", "Provider", "1.0.0")
+		assert.False(t, exists)
+	})
+
+	t.Run("records failed verification", func(t *testing.T) {
+		storage := broker.NewMemoryStorage()
+
+		err := storage.RecordVerification("Consumer", "Provider", "1.0.0", false)
+		require.NoError(t, err)
+
+		success, exists := storage.GetVerification("Consumer", "Provider", "1.0.0")
+		assert.True(t, exists)
+		assert.False(t, success)
+	})
+}
+
 func createTestContract(consumer, provider, version string) *contract.Contract {
 	return &contract.Contract{
 		Consumer: contract.Pacticipant{Name: consumer},
