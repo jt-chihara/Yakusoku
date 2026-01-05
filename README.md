@@ -115,7 +115,7 @@ Consumer が「こう呼んだらこう返ってくるはず」という期待�
 
 ## 特徴
 
-- **Consumer SDK** - Consumer テストで契約の期待値を定義
+- **Consumer SDK** - Go / Ruby (Rails) で契約の期待値を定義
 - **Provider 検証** - 契約ファイルに対して Provider API を検証
 - **Pact v3 互換** - Pact Specification v3 と完全互換
 - **CLI ツール** - コマンドラインから契約を管理・検証
@@ -191,6 +191,45 @@ func TestUserServiceClient(t *testing.T) {
 ```
 
 このテストを実行すると、`./pacts/orderservice-userservice.json` に契約ファイルが生成されます。
+
+### 1-2. Consumer 契約を定義 (Ruby SDK)
+
+```ruby
+# spec/contracts/user_service_spec.rb
+require 'yakusoku/rspec'
+
+RSpec.describe 'UserService Contract' do
+  let(:pact) do
+    Yakusoku::Pact.new(
+      consumer: 'OrderService',
+      provider: 'UserService',
+      pact_dir: './pacts'
+    )
+  end
+
+  after { pact.teardown }
+
+  it 'returns user details' do
+    pact
+      .given('user 1 exists')
+      .upon_receiving('a request for user 1')
+      .with_request(method: 'GET', path: '/users/1')
+      .will_respond_with(
+        status: 200,
+        headers: { 'Content-Type' => 'application/json' },
+        body: { id: 1, name: 'John Doe' }
+      )
+
+    pact.verify do |mock_server_url|
+      response = Net::HTTP.get(URI("#{mock_server_url}/users/1"))
+      user = JSON.parse(response)
+      expect(user['id']).to eq(1)
+    end
+  end
+end
+```
+
+詳細は [Ruby SDK README](sdk/ruby/yakusoku/README.md) を参照してください。
 
 ### 2. Provider を検証
 
@@ -454,7 +493,8 @@ make all  # lint, test, build
 │   ├── mock/              # モック HTTP サーバー
 │   └── verifier/          # Provider 検証
 ├── sdk/
-│   └── go/yakusoku/       # Go SDK
+│   ├── go/yakusoku/       # Go SDK
+│   └── ruby/yakusoku/     # Ruby SDK
 ├── web/                   # Web UI ソース (Vite + React + TypeScript)
 └── tests/
     ├── unit/              # ユニットテスト
