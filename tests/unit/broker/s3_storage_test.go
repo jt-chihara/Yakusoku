@@ -128,6 +128,92 @@ func TestS3Storage_ListContracts(t *testing.T) {
 	})
 }
 
+func TestS3Storage_GetContractsByProvider(t *testing.T) {
+	t.Run("returns contracts for specific provider", func(t *testing.T) {
+		mock := broker.NewMockS3Client()
+		storage := broker.NewS3Storage(mock, "test-bucket", "pacts/")
+
+		c1 := &contract.Contract{
+			Consumer: contract.Pacticipant{Name: "Consumer1"},
+			Provider: contract.Pacticipant{Name: "SharedProvider"},
+			Metadata: contract.Metadata{
+				PactSpecification: contract.PactSpec{Version: "1.0.0"},
+			},
+		}
+		c2 := &contract.Contract{
+			Consumer: contract.Pacticipant{Name: "Consumer2"},
+			Provider: contract.Pacticipant{Name: "SharedProvider"},
+			Metadata: contract.Metadata{
+				PactSpecification: contract.PactSpec{Version: "1.0.0"},
+			},
+		}
+		c3 := &contract.Contract{
+			Consumer: contract.Pacticipant{Name: "Consumer3"},
+			Provider: contract.Pacticipant{Name: "OtherProvider"},
+			Metadata: contract.Metadata{
+				PactSpecification: contract.PactSpec{Version: "1.0.0"},
+			},
+		}
+		_ = storage.SaveContract(c1)
+		_ = storage.SaveContract(c2)
+		_ = storage.SaveContract(c3)
+
+		contracts := storage.GetContractsByProvider("SharedProvider")
+		assert.Len(t, contracts, 2)
+	})
+
+	t.Run("returns empty list for non-existent provider", func(t *testing.T) {
+		mock := broker.NewMockS3Client()
+		storage := broker.NewS3Storage(mock, "test-bucket", "pacts/")
+
+		contracts := storage.GetContractsByProvider("NonExistent")
+		assert.Empty(t, contracts)
+	})
+}
+
+func TestS3Storage_GetContractsByConsumer(t *testing.T) {
+	t.Run("returns contracts for specific consumer", func(t *testing.T) {
+		mock := broker.NewMockS3Client()
+		storage := broker.NewS3Storage(mock, "test-bucket", "pacts/")
+
+		c1 := &contract.Contract{
+			Consumer: contract.Pacticipant{Name: "SharedConsumer"},
+			Provider: contract.Pacticipant{Name: "Provider1"},
+			Metadata: contract.Metadata{
+				PactSpecification: contract.PactSpec{Version: "1.0.0"},
+			},
+		}
+		c2 := &contract.Contract{
+			Consumer: contract.Pacticipant{Name: "SharedConsumer"},
+			Provider: contract.Pacticipant{Name: "Provider2"},
+			Metadata: contract.Metadata{
+				PactSpecification: contract.PactSpec{Version: "1.0.0"},
+			},
+		}
+		c3 := &contract.Contract{
+			Consumer: contract.Pacticipant{Name: "OtherConsumer"},
+			Provider: contract.Pacticipant{Name: "Provider3"},
+			Metadata: contract.Metadata{
+				PactSpecification: contract.PactSpec{Version: "1.0.0"},
+			},
+		}
+		_ = storage.SaveContract(c1)
+		_ = storage.SaveContract(c2)
+		_ = storage.SaveContract(c3)
+
+		contracts := storage.GetContractsByConsumer("SharedConsumer")
+		assert.Len(t, contracts, 2)
+	})
+
+	t.Run("returns empty list for non-existent consumer", func(t *testing.T) {
+		mock := broker.NewMockS3Client()
+		storage := broker.NewS3Storage(mock, "test-bucket", "pacts/")
+
+		contracts := storage.GetContractsByConsumer("NonExistent")
+		assert.Empty(t, contracts)
+	})
+}
+
 func TestS3Storage_DeleteContract(t *testing.T) {
 	t.Run("deletes contract from S3", func(t *testing.T) {
 		mock := broker.NewMockS3Client()
