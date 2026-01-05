@@ -69,7 +69,7 @@ func runCanIDeploy(cmd *cobra.Command, brokerURL, brokerToken, pacticipant, vers
 	requestURL := fmt.Sprintf("%s/matrix?%s", brokerURL, params.Encode())
 
 	// Send request
-	req, err := http.NewRequest(http.MethodGet, requestURL, nil)
+	req, err := http.NewRequest(http.MethodGet, requestURL, http.NoBody)
 	if err != nil {
 		return fmt.Errorf("failed to create request: %w", err)
 	}
