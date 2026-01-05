@@ -168,6 +168,34 @@ func TestPublishCommand_Execute(t *testing.T) {
 		require.NoError(t, err)
 		assert.NotEmpty(t, requestPath)
 	})
+
+	t.Run("sends Authorization header when broker-token is provided", func(t *testing.T) {
+		var authHeader string
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			authHeader = r.Header.Get("Authorization")
+			w.WriteHeader(http.StatusCreated)
+		}))
+		defer server.Close()
+
+		tmpDir := t.TempDir()
+		contractPath := filepath.Join(tmpDir, "contract.json")
+		createPublishContract(t, contractPath)
+
+		var stdout, stderr bytes.Buffer
+		cmd := cli.NewPublishCommand()
+		cmd.SetOut(&stdout)
+		cmd.SetErr(&stderr)
+		cmd.SetArgs([]string{
+			"--broker-url", server.URL,
+			"--broker-token", "test-secret-token",
+			"--pact-file", contractPath,
+			"--consumer-version", "1.0.0",
+		})
+
+		err := cmd.Execute()
+		require.NoError(t, err)
+		assert.Equal(t, "Bearer test-secret-token", authHeader)
+	})
 }
 
 func createPublishContract(t *testing.T, path string) {

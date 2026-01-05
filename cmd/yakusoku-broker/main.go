@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/jt-chihara/yakusoku/internal/broker"
 )
@@ -18,6 +19,11 @@ func main() {
 	s3Endpoint := flag.String("s3-endpoint", "", "S3 endpoint URL (for LocalStack/MinIO)")
 	s3Region := flag.String("s3-region", "ap-northeast-1", "AWS region")
 	flag.Parse()
+
+	token := os.Getenv("YAKUSOKU_BROKER_TOKEN")
+	if token == "" {
+		log.Fatal("YAKUSOKU_BROKER_TOKEN environment variable is required")
+	}
 
 	var storage broker.Storage
 
@@ -57,9 +63,11 @@ func main() {
 	}
 
 	api := broker.NewAPI(storage)
+	handler := broker.WrapWithAuth(token, api.Handler())
 
 	addr := fmt.Sprintf(":%d", *port)
 	fmt.Printf("\nYakusoku Broker starting on %s\n", addr)
+	fmt.Println("Authentication: enabled (Bearer token required)")
 	fmt.Println("\nAvailable endpoints:")
 	fmt.Println("  GET  /pacts                                                    - List all contracts")
 	fmt.Println("  GET  /pacts/provider/{provider}                                - Get contracts by provider")
@@ -72,7 +80,7 @@ func main() {
 	fmt.Println("")
 	fmt.Println("  GET  /ui                                                       - Web UI")
 
-	if err := http.ListenAndServe(addr, api.Handler()); err != nil {
+	if err := http.ListenAndServe(addr, handler); err != nil {
 		log.Fatal(err)
 	}
 }

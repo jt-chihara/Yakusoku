@@ -16,6 +16,7 @@ import (
 // NewPublishCommand creates the publish command
 func NewPublishCommand() *cobra.Command {
 	var brokerURL string
+	var brokerToken string
 	var pactFile string
 	var pactDir string
 	var consumerVersion string
@@ -47,11 +48,12 @@ func NewPublishCommand() *cobra.Command {
 				return fmt.Errorf("either --pact-file or --pact-dir is required")
 			}
 
-			return runPublish(cmd, brokerURL, files, consumerVersion, tags)
+			return runPublish(cmd, brokerURL, brokerToken, files, consumerVersion, tags)
 		},
 	}
 
 	cmd.Flags().StringVar(&brokerURL, "broker-url", "", "URL of the Pact broker (required)")
+	cmd.Flags().StringVar(&brokerToken, "broker-token", "", "API token for broker authentication")
 	cmd.Flags().StringVar(&pactFile, "pact-file", "", "Path to a contract file")
 	cmd.Flags().StringVar(&pactDir, "pact-dir", "", "Directory containing contract files")
 	cmd.Flags().StringVar(&consumerVersion, "consumer-version", "", "Version of the consumer (required)")
@@ -60,7 +62,7 @@ func NewPublishCommand() *cobra.Command {
 	return cmd
 }
 
-func runPublish(cmd *cobra.Command, brokerURL string, files []string, version string, tags []string) error {
+func runPublish(cmd *cobra.Command, brokerURL, brokerToken string, files []string, version string, tags []string) error {
 	parser := contract.NewParser()
 
 	for _, file := range files {
@@ -85,6 +87,9 @@ func runPublish(cmd *cobra.Command, brokerURL string, files []string, version st
 			return fmt.Errorf("failed to create request: %w", err)
 		}
 		req.Header.Set("Content-Type", "application/json")
+		if brokerToken != "" {
+			req.Header.Set("Authorization", "Bearer "+brokerToken)
+		}
 
 		// Send request
 		resp, err := http.DefaultClient.Do(req)
@@ -108,6 +113,9 @@ func runPublish(cmd *cobra.Command, brokerURL string, files []string, version st
 			tagReq, err := http.NewRequest(http.MethodPut, tagURL, http.NoBody)
 			if err != nil {
 				continue
+			}
+			if brokerToken != "" {
+				tagReq.Header.Set("Authorization", "Bearer "+brokerToken)
 			}
 			tagResp, err := http.DefaultClient.Do(tagReq)
 			if err == nil {

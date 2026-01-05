@@ -279,6 +279,59 @@ yakusoku verify [flags]
   --verbose                            詳細出力を表示
 ```
 
+### publish
+
+契約ファイルを Broker に publish します。
+
+```bash
+yakusoku publish [flags]
+
+フラグ:
+  --broker-url string        Broker の URL (必須)
+  --broker-token string      Broker 認証トークン (必須)
+  --pact-file string         契約ファイルのパス
+  --pact-dir string          契約ファイルのディレクトリ
+  --consumer-version string  Consumer のバージョン (必須)
+  --tag string               契約に付けるタグ (複数指定可)
+```
+
+例:
+
+```bash
+yakusoku publish \
+  --broker-url http://localhost:8080 \
+  --broker-token your-secret-token \
+  --pact-dir ./pacts \
+  --consumer-version 1.0.0
+```
+
+### can-i-deploy
+
+Consumer または Provider がデプロイ可能かチェックします。
+
+```bash
+yakusoku can-i-deploy [flags]
+
+フラグ:
+  --broker-url string      Broker の URL (必須)
+  --broker-token string    Broker 認証トークン (必須)
+  --pacticipant string     チェック対象のサービス名 (必須)
+  --version string         チェック対象のバージョン
+  --latest                 最新バージョンをチェック
+  --to-environment string  デプロイ先環境
+  --json                   JSON 形式で出力
+```
+
+例:
+
+```bash
+yakusoku can-i-deploy \
+  --broker-url http://localhost:8080 \
+  --broker-token your-secret-token \
+  --pacticipant OrderService \
+  --version 1.0.0
+```
+
 ### version
 
 バージョン情報を表示します。
@@ -355,17 +408,27 @@ http.HandleFunc("/provider-states", func(w http.ResponseWriter, r *http.Request)
 
 契約ファイルを中央管理するためのサーバーです。複数チーム間での契約共有や can-i-deploy チェックに使用します。
 
+### 認証
+
+Broker へのアクセスには Bearer トークン認証が必須です。セキュリティのため、トークンは環境変数でのみ設定可能です（コマンドライン引数では指定できません）。
+
+```bash
+export YAKUSOKU_BROKER_TOKEN=your-secret-token
+```
+
 ### 起動方法
 
 #### インメモリ（開発用）
 
 ```bash
+export YAKUSOKU_BROKER_TOKEN=your-secret-token
 yakusoku-broker --port 8080
 ```
 
 #### AWS S3（本番用）
 
 ```bash
+export YAKUSOKU_BROKER_TOKEN=your-secret-token
 yakusoku-broker --storage s3 \
   --s3-bucket my-yakusoku-bucket \
   --s3-prefix pacts/ \
@@ -377,19 +440,25 @@ yakusoku-broker --storage s3 \
 LocalStack (S3) と Broker をまとめて起動できます。
 
 ```bash
+# デフォルトトークン (dev-token) で起動
 docker compose up -d
+
+# カスタムトークンを指定する場合
+YAKUSOKU_BROKER_TOKEN=my-secret-token docker compose up -d
 ```
 
 起動後:
 - **Broker**: http://localhost:8080
 - **Web UI**: http://localhost:8080/ui
 - **LocalStack**: http://localhost:4566
+- **デフォルトトークン**: `dev-token`（本番環境では必ず変更してください）
 
 #### 契約を publish
 
 ```bash
 curl -X POST http://localhost:8080/pacts/provider/UserService/consumer/OrderService/version/1.0.0 \
   -H "Content-Type: application/json" \
+  -H "Authorization: Bearer your-secret-token" \
   -d @./pacts/orderservice-userservice.json
 ```
 
@@ -397,16 +466,19 @@ curl -X POST http://localhost:8080/pacts/provider/UserService/consumer/OrderServ
 
 ```bash
 # 特定バージョン
-curl http://localhost:8080/pacts/provider/UserService/consumer/OrderService/version/1.0.0
+curl -H "Authorization: Bearer your-secret-token" \
+  http://localhost:8080/pacts/provider/UserService/consumer/OrderService/version/1.0.0
 
 # 最新バージョン
-curl http://localhost:8080/pacts/provider/UserService/consumer/OrderService/latest
+curl -H "Authorization: Bearer your-secret-token" \
+  http://localhost:8080/pacts/provider/UserService/consumer/OrderService/latest
 ```
 
 #### can-i-deploy チェック
 
 ```bash
-curl "http://localhost:8080/matrix?pacticipant=OrderService&version=1.0.0"
+curl -H "Authorization: Bearer your-secret-token" \
+  "http://localhost:8080/matrix?pacticipant=OrderService&version=1.0.0"
 ```
 
 ### LocalStack を単独で使う場合
@@ -418,6 +490,7 @@ Broker をローカルでビルドして実行する場合:
 docker compose up localstack -d
 
 # Broker を起動
+export YAKUSOKU_BROKER_TOKEN=your-secret-token
 yakusoku-broker --storage s3 \
   --s3-bucket yakusoku \
   --s3-endpoint http://localhost:4566 \

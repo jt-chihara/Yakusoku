@@ -22,6 +22,7 @@ services:
     environment:
       - AWS_ACCESS_KEY_ID=test
       - AWS_SECRET_ACCESS_KEY=test
+      - YAKUSOKU_BROKER_TOKEN=${YAKUSOKU_BROKER_TOKEN:-dev-token}
     command:
       - "--storage=s3"
       - "--s3-bucket=yakusoku"
@@ -31,7 +32,7 @@ services:
       localstack:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/pacts"]
+      test: ["CMD", "curl", "-f", "-H", "Authorization: Bearer ${YAKUSOKU_BROKER_TOKEN:-dev-token}", "http://localhost:8080/pacts"]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -44,6 +45,7 @@ services:
     entrypoint: ["/bin/sh", "/seed-data.sh"]
     environment:
       - BROKER_URL=http://broker:8080
+      - BROKER_TOKEN=${YAKUSOKU_BROKER_TOKEN:-dev-token}
     depends_on:
       broker:
         condition: service_healthy

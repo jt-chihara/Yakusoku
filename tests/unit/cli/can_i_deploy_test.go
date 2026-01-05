@@ -184,4 +184,34 @@ func TestCanIDeployCommand_Execute(t *testing.T) {
 		require.NoError(t, err)
 		assert.Contains(t, requestedPath, "latest=true")
 	})
+
+	t.Run("sends Authorization header when broker-token is provided", func(t *testing.T) {
+		var authHeader string
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			authHeader = r.Header.Get("Authorization")
+			json.NewEncoder(w).Encode(map[string]interface{}{
+				"deployable": true,
+				"summary": map[string]interface{}{
+					"deployable": true,
+					"reason":     "Success",
+				},
+			})
+		}))
+		defer server.Close()
+
+		var stdout, stderr bytes.Buffer
+		cmd := cli.NewCanIDeployCommand()
+		cmd.SetOut(&stdout)
+		cmd.SetErr(&stderr)
+		cmd.SetArgs([]string{
+			"--broker-url", server.URL,
+			"--broker-token", "test-secret-token",
+			"--pacticipant", "Consumer",
+			"--version", "1.0.0",
+		})
+
+		err := cmd.Execute()
+		require.NoError(t, err)
+		assert.Equal(t, "Bearer test-secret-token", authHeader)
+	})
 }
