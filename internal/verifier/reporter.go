@@ -28,17 +28,18 @@ func (r *Reporter) Report(result *VerificationResult) {
 	passed := 0
 	failed := 0
 
-	for _, ir := range result.Interactions {
+	for i := range result.Interactions {
+		ir := &result.Interactions[i]
 		if ir.Success {
 			passed++
 			fmt.Fprintf(r.w, "  ✓ %s - passed\n", ir.Description)
 			if r.verbose {
-				r.printRequestInfo(&ir)
+				r.printRequestInfo(ir)
 			}
 		} else {
 			failed++
 			fmt.Fprintf(r.w, "  ✗ %s - failed\n", ir.Description)
-			r.printFailureDetails(&ir)
+			r.printFailureDetails(ir)
 		}
 	}
 

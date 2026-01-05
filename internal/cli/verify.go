@@ -26,6 +26,7 @@ func NewVerifyCommand() *cobra.Command {
 		Use:   "verify",
 		Short: "Verify a provider against a contract file",
 		Long:  "Verify that a provider API satisfies the expectations defined in a Pact contract file.",
+		SilenceUsage: true,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return runVerify(cmd, opts)
 		},
@@ -89,8 +90,8 @@ func runVerify(cmd *cobra.Command, opts *verifyOptions) error {
 
 func countFailed(interactions []verifier.InteractionResult) int {
 	count := 0
-	for _, i := range interactions {
-		if !i.Success {
+	for i := range interactions {
+		if !interactions[i].Success {
 			count++
 		}
 	}

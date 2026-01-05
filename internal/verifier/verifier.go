@@ -34,15 +34,15 @@ type InteractionResult struct {
 	RequestPath    string
 	ResponseStatus int
 	// Details for error reporting
-	ProviderState      string
-	ExpectedStatus     int
-	ExpectedHeaders    map[string]interface{}
-	ExpectedBody       interface{}
-	ActualHeaders      map[string]string
-	ActualBody         interface{}
-	ActualBodyRaw      string
-	RequestHeaders     map[string]interface{}
-	RequestBody        interface{}
+	ProviderState   string
+	ExpectedStatus  int
+	ExpectedHeaders map[string]interface{}
+	ExpectedBody    interface{}
+	ActualHeaders   map[string]string
+	ActualBody      interface{}
+	ActualBodyRaw   string
+	RequestHeaders  map[string]interface{}
+	RequestBody     interface{}
 }
 
 // Verifier verifies contracts against a provider.
