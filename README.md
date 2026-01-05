@@ -4,7 +4,21 @@
 [![E2E Test](https://github.com/jt-chihara/yakusoku/actions/workflows/e2e.yml/badge.svg)](https://github.com/jt-chihara/yakusoku/actions/workflows/e2e.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Consumer-driven な契約テスト CLI ツール。Pact Specification v3/v4 互換。
+Pact Specification v3/v4 に対応した CLI で、API Consumer と Provider 間の契約テストを簡単に実行できます。
+
+## 🚀 特徴
+
+- 🧑‍💻 **Consumer SDK**  
+  Consumer 側のテストコードで契約（期待する API の振る舞い）を定義
+
+- ✅ **Provider 検証**  
+  生成された契約ファイルを使って Provider API が契約を満たしているか検証
+
+- 📄 **Pact v3/v4 互換**  
+  Pact 仕様（v3/v4）形式の契約ファイルを生成・検証
+
+- 🛠 **CLI ツール**  
+  契約検証をコマンドラインで実行可能
 
 ## 契約テスト (Consumer Driven Contract Test) とは
 
@@ -21,7 +35,7 @@ OrderService → UserService → PaymentService
 
 ### 解決策: 契約テスト
 
-Consumer（API を呼ぶ側）が「期待する API の振る舞い」を契約として定義し、Provider（API を提供する側）がその契約を満たしているか検証します。
+Consumer（API を呼ぶ側）が「自分が必要とする API の振る舞い」を契約として定義し、Provider（API 提供側）がその契約を満たしていることを検証します。
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐

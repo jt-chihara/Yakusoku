@@ -33,6 +33,16 @@ type InteractionResult struct {
 	RequestMethod  string
 	RequestPath    string
 	ResponseStatus int
+	// Details for error reporting
+	ProviderState   string
+	ExpectedStatus  int
+	ExpectedHeaders map[string]interface{}
+	ExpectedBody    interface{}
+	ActualHeaders   map[string]string
+	ActualBody      interface{}
+	ActualBodyRaw   string
+	RequestHeaders  map[string]interface{}
+	RequestBody     interface{}
 }
 
 // Verifier verifies contracts against a provider.
@@ -73,9 +83,15 @@ func (v *Verifier) Verify(c *contract.Contract) (*VerificationResult, error) {
 
 func (v *Verifier) verifyInteraction(interaction *contract.Interaction) InteractionResult {
 	ir := InteractionResult{
-		Description:   interaction.Description,
-		RequestMethod: interaction.Request.Method,
-		RequestPath:   interaction.Request.Path,
+		Description:     interaction.Description,
+		RequestMethod:   interaction.Request.Method,
+		RequestPath:     interaction.Request.Path,
+		ProviderState:   interaction.ProviderState,
+		ExpectedStatus:  interaction.Response.Status,
+		ExpectedHeaders: interaction.Response.Headers,
+		ExpectedBody:    interaction.Response.Body,
+		RequestHeaders:  interaction.Request.Headers,
+		RequestBody:     interaction.Request.Body,
 	}
 
 	// Setup provider states
@@ -136,34 +152,38 @@ func (v *Verifier) verifyInteraction(interaction *contract.Interaction) Interact
 	}
 
 	// Compare headers
+	actualHeaders := make(map[string]string)
+	for key := range resp.Header {
+		actualHeaders[key] = resp.Header.Get(key)
+	}
+	ir.ActualHeaders = actualHeaders
+
 	if interaction.Response.Headers != nil {
-		actualHeaders := make(map[string]string)
-		for key := range resp.Header {
-			actualHeaders[key] = resp.Header.Get(key)
-		}
 		headerResult := v.comparer.CompareHeaders(interaction.Response.Headers, actualHeaders)
 		if !headerResult.Match {
 			diffs = append(diffs, headerResult.Diff)
 		}
 	}
 
-	// Compare body
-	if interaction.Response.Body != nil {
-		body, err := io.ReadAll(resp.Body)
-		if err != nil {
-			ir.Error = fmt.Sprintf("failed to read response body: %v", err)
+	// Read and compare body
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		ir.Error = fmt.Sprintf("failed to read response body: %v", err)
+		return ir
+	}
+	ir.ActualBodyRaw = string(body)
+
+	if len(body) > 0 {
+		var actualBody interface{}
+		if err := json.Unmarshal(body, &actualBody); err != nil {
+			ir.Error = fmt.Sprintf("failed to parse response body: %v", err)
 			return ir
 		}
+		ir.ActualBody = actualBody
+	}
 
-		var actualBody interface{}
-		if len(body) > 0 {
-			if err := json.Unmarshal(body, &actualBody); err != nil {
-				ir.Error = fmt.Sprintf("failed to parse response body: %v", err)
-				return ir
-			}
-		}
-
-		bodyResult, err := v.comparer.CompareBody(interaction.Response.Body, actualBody, interaction.Response.MatchingRules.Body)
+	if interaction.Response.Body != nil {
+		bodyResult, err := v.comparer.CompareBody(interaction.Response.Body, ir.ActualBody, interaction.Response.MatchingRules.Body)
 		if err != nil {
 			ir.Error = fmt.Sprintf("failed to compare body: %v", err)
 			return ir
