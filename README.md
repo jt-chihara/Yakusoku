@@ -2,6 +2,7 @@
 
 [![Test](https://github.com/jt-chihara/yakusoku/actions/workflows/test.yml/badge.svg)](https://github.com/jt-chihara/yakusoku/actions/workflows/test.yml)
 [![E2E Test](https://github.com/jt-chihara/yakusoku/actions/workflows/e2e.yml/badge.svg)](https://github.com/jt-chihara/yakusoku/actions/workflows/e2e.yml)
+[![codecov](https://codecov.io/gh/jt-chihara/yakusoku/graph/badge.svg)](https://codecov.io/gh/jt-chihara/yakusoku)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 Pact Specification v3/v4 に対応した CLI で、API Consumer と Provider 間の契約テストを簡単に実行できます。
