@@ -13,6 +13,7 @@ import (
 // NewCanIDeployCommand creates the can-i-deploy command
 func NewCanIDeployCommand() *cobra.Command {
 	var brokerURL string
+	var brokerToken string
 	var pacticipant string
 	var version string
 	var toEnvironment string
@@ -34,11 +35,12 @@ func NewCanIDeployCommand() *cobra.Command {
 				return fmt.Errorf("either --version or --latest is required")
 			}
 
-			return runCanIDeploy(cmd, brokerURL, pacticipant, version, toEnvironment, latest, jsonOutput)
+			return runCanIDeploy(cmd, brokerURL, brokerToken, pacticipant, version, toEnvironment, latest, jsonOutput)
 		},
 	}
 
 	cmd.Flags().StringVar(&brokerURL, "broker-url", "", "URL of the Pact broker (required)")
+	cmd.Flags().StringVar(&brokerToken, "broker-token", "", "API token for broker authentication")
 	cmd.Flags().StringVar(&pacticipant, "pacticipant", "", "Name of the pacticipant (required)")
 	cmd.Flags().StringVar(&version, "version", "", "Version of the pacticipant")
 	cmd.Flags().StringVar(&toEnvironment, "to-environment", "", "Target environment for deployment")
@@ -48,7 +50,7 @@ func NewCanIDeployCommand() *cobra.Command {
 	return cmd
 }
 
-func runCanIDeploy(cmd *cobra.Command, brokerURL, pacticipant, version, toEnvironment string, latest, jsonOutput bool) error {
+func runCanIDeploy(cmd *cobra.Command, brokerURL, brokerToken, pacticipant, version, toEnvironment string, latest, jsonOutput bool) error {
 	// Build query parameters
 	params := url.Values{}
 	params.Set("pacticipant", pacticipant)
@@ -67,7 +69,15 @@ func runCanIDeploy(cmd *cobra.Command, brokerURL, pacticipant, version, toEnviro
 	requestURL := fmt.Sprintf("%s/matrix?%s", brokerURL, params.Encode())
 
 	// Send request
-	resp, err := http.Get(requestURL)
+	req, err := http.NewRequest(http.MethodGet, requestURL, nil)
+	if err != nil {
+		return fmt.Errorf("failed to create request: %w", err)
+	}
+	if brokerToken != "" {
+		req.Header.Set("Authorization", "Bearer "+brokerToken)
+	}
+
+	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return fmt.Errorf("failed to query broker: %w", err)
 	}
