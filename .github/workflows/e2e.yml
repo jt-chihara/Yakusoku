@@ -27,9 +27,53 @@ jobs:
           go run ./examples/userservice &
           sleep 3
 
-      - name: Verify Provider against contracts
+      - name: Verify Provider against contracts (should pass)
         run: |
           ./bin/yakusoku verify \
             --provider-base-url http://localhost:8080 \
             --pact-file pacts/orderservice-userservice.json \
-            --provider-states-setup-url http://localhost:8080/provider-states
+            --provider-states-setup-url http://localhost:8080/provider-states \
+            --verbose
+
+      - name: Create broken contract for failure test
+        run: |
+          cat > /tmp/broken-contract.json << 'EOF'
+          {
+            "consumer": { "name": "TestConsumer" },
+            "provider": { "name": "UserService" },
+            "interactions": [
+              {
+                "description": "a request with wrong expectation",
+                "providerState": "user 1 exists",
+                "request": {
+                  "method": "GET",
+                  "path": "/users/1"
+                },
+                "response": {
+                  "status": 200,
+                  "body": {
+                    "id": 1,
+                    "name": "Wrong Name",
+                    "email": "wrong@example.com"
+                  }
+                }
+              }
+            ]
+          }
+          EOF
+
+      - name: Verify broken contract fails correctly
+        run: |
+          echo "=== Testing that verification correctly detects contract violations ==="
+          if ./bin/yakusoku verify \
+            --provider-base-url http://localhost:8080 \
+            --pact-file /tmp/broken-contract.json \
+            --provider-states-setup-url http://localhost:8080/provider-states \
+            --verbose; then
+            echo "ERROR: Verification should have failed but passed!"
+            exit 1
+          else
+            echo ""
+            echo "=== SUCCESS: Verification correctly detected the contract violation ==="
+            exit 0
+          fi
