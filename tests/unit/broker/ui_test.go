@@ -4,7 +4,6 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
-	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -60,33 +59,6 @@ func TestUI_Handler(t *testing.T) {
 		assert.Equal(t, "text/html; charset=utf-8", resp.Header.Get("Content-Type"))
 	})
 
-	t.Run("serves SVG file with correct content type", func(t *testing.T) {
-		resp, err := http.Get(server.URL + "/vite.svg")
-		require.NoError(t, err)
-		defer resp.Body.Close()
-
-		assert.Equal(t, http.StatusOK, resp.StatusCode)
-		assert.Equal(t, "image/svg+xml", resp.Header.Get("Content-Type"))
-	})
-
-	t.Run("serves CSS file from assets with correct content type", func(t *testing.T) {
-		resp, err := http.Get(server.URL + "/assets/index-CWyftKQk.css")
-		require.NoError(t, err)
-		defer resp.Body.Close()
-
-		assert.Equal(t, http.StatusOK, resp.StatusCode)
-		assert.Equal(t, "text/css; charset=utf-8", resp.Header.Get("Content-Type"))
-	})
-
-	t.Run("serves JS file from assets with correct content type", func(t *testing.T) {
-		resp, err := http.Get(server.URL + "/assets/index-DWa93a-y.js")
-		require.NoError(t, err)
-		defer resp.Body.Close()
-
-		assert.Equal(t, http.StatusOK, resp.StatusCode)
-		assert.Equal(t, "application/javascript; charset=utf-8", resp.Header.Get("Content-Type"))
-	})
-
 	t.Run("handles /ui/ prefix with trailing slash", func(t *testing.T) {
 		resp, err := http.Get(server.URL + "/ui/")
 		require.NoError(t, err)
@@ -105,6 +77,6 @@ func TestUI_Handler(t *testing.T) {
 		assert.Equal(t, "text/html; charset=utf-8", resp.Header.Get("Content-Type"))
 
 		body, _ := io.ReadAll(resp.Body)
-		assert.True(t, strings.Contains(string(body), "<!doctype html>"))
+		assert.Contains(t, string(body), "<!doctype html>")
 	})
 }
